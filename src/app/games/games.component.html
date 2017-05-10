@@ -1,0 +1,39 @@
+<md-card>
+  <div layout="row" layout-align="start center" class="pad-left-sm pad-right-sm">
+    <span *ngIf="!searchBox.searchVisible" class="push-left-sm">
+      <span class="md-title">Games</span>
+    </span>
+    
+    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search" (searchDebounce)="search($event)" flex>
+    </td-search-box>
+    <div>
+      <md-select placeholder="Week" floatPlaceholder="never" [(ngModel)]="selectedSchedule" class="scheduleInput">
+        <md-option *ngFor="let schedule of gamesDetail.displayPeriods" [value]="schedule.period">{{ schedule.displayPeriod }}</md-option>
+      </md-select>
+    </div>
+  </div>
+  <md-divider *ngIf="isLoadingGames || filteredGames.length == 0"></md-divider>
+  <div *ngIf="!isLoadingGames && filteredGames.length == 0" layout="row" layout-align="center center">
+      <h3>No games found.</h3>
+  </div>
+  <div *ngIf="isLoadingGames" layout="column" layout-align="center center" class="loadingProgress">
+      <h3>Loading</h3>
+      <md-progress-bar mode="indeterminate"></md-progress-bar>
+  </div>  
+  
+  <table td-data-table *ngIf="!isLoadingGames && filteredGames.length > 0">
+      <th td-data-table-column>Home</th>
+      <th td-data-table-column>Away</th>
+      <th td-data-table-column>Time {{currentTimeZone()}}</th>
+      <th td-data-table-column>Join</th>
+        <tr td-data-table-row class="game-row" *ngFor="let game of filteredGames">
+          <td td-data-table-cell><img [src]="game.homeTeam.logoUri" /> {{game.homeTeam.location}}</td>
+          <td td-data-table-cell><img [src]="game.awayTeam.logoUri"  /> {{game.awayTeam.location}}</td>
+          <td td-data-table-cell>{{game.gameDate | date :'shortDate'}} <br/>{{game.gameDate | date :'shortTime'}}</td>
+          <td td-data-table-cell>
+            <a md-icon-button [routerLink]="['/join/',game.gameId]"><md-icon>grid_on</md-icon></a>
+          </td>
+        </tr>
+  </table>
+  <p>&nbsp;</p>
+</md-card>

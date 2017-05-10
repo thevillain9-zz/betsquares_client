@@ -1,0 +1,19 @@
+<!--<md-toolbar color="primary">-->
+    <!--<button class="app-icon-button" (click)="onToggleSideNav()">
+      <i class="material-icons app-toolbar-menu">menu</i>
+    </button>-->
+<div>
+    <a md-button [routerLink]="['/']">Home</a>
+    <a md-button [routerLink]="['/games']">Games</a>
+    <a md-button [routerLink]="['/about']">About</a>
+    <span class="app-toolbar-filler"></span>
+    <a *ngIf="!currentUser" md-button [routerLink]="['/login']">Login</a>
+    <a *ngIf="!currentUser" md-raised-button color="accent" [routerLink]="['/register']">Signup</a>
+</div>
+    <!--<li *ngIf="currentUser != null">
+        <a href="http://example.com" id="responsiveNavbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{currentUser.firstName}}</a>
+        <div class="dropdown-menu" aria-labelledby="responsiveNavbarDropdown">
+            <a class="dropdown-item" [routerLink]="['/login']">Logout</a>
+        </div>
+    </li>-->
+<!--</md-toolbar>-->

@@ -1,0 +1,46 @@
+<div fxLayout="column" fxLayoutAlign="space-between center">
+    
+    <!-- Fix style to match material design
+         https://www.material.io/guidelines/patterns/errors.html#errors-incompatible-state-errors
+         -->
+    <md-card style="background: red;" *ngIf="isErrorState">
+        <md-card-header>
+            <md-icon>error_outline</md-icon>
+            <md-card-title>Error</md-card-title>
+            <md-card-subtitle>{{errorMessage}}</md-card-subtitle>
+        </md-card-header>
+    </md-card>
+
+    <!--Remove and fix fxLayoutAlign-->
+    <p></p>       
+
+    <md-card>
+        <md-card-title>Login</md-card-title>
+        <md-card-content>
+            <div>
+                <div *ngIf="isLoading" fxLayout="column" fxLayoutAlign="space-between center" style="width:300px;">
+                    <md-progress-bar mode="indeterminate"></md-progress-bar>
+                    <p class="savingLabel"></p>
+                </div>          
+                <div [hidden]="isLoading">
+                    <form novalidate [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <md-input-container>
+                            <input mdInput placeholder="Username" required formControlName="username">
+                            <md-error>Username is required</md-error>
+                        </md-input-container>
+
+                        <md-input-container>
+                            <input type="password" mdInput required placeholder="Password" formControlName="password"> 
+                            <md-error>Password is required</md-error>
+                        </md-input-container>
+
+                        <p>
+                            <button md-raised-button color="primary" type="submit">Login</button>
+                            <button md-raised-button color="accent" [routerLink]="['/register']">Register</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </md-card-content>  
+    </md-card>
+</div>

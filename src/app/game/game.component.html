@@ -1,0 +1,68 @@
+
+<!--<div *ngIf="game && !game.isActive" class="card">-->
+<div *ngIf="game && !game.isActive" class="card">
+    <div class="row">
+        <h2> Join a game</h2>
+    </div>
+    <div class="row">
+        <h2>Create a grid game</h2>
+    </div>
+    <div class="row">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+                <tr *ngFor="let gridgame of gridgames">
+                    <td></td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div *ngIf="game && game.isActive" class="card">
+        <div class="row">            
+            <div class="col-xs-3" style="text-align: center">
+                    <img [src]="game.homeTeam.logoUri" />
+                    <h3>{{game.homeTeam.location}}</h3>
+            </div>
+            <div class="col-xs-1">   
+                <h1>{{game.score.homeTeamScore}}</h1>                 
+            </div>
+            <div class="col-xs-3">   
+                <p class="time">{{game.gameDate | date :'shortDate'}} <BR/> {{game.gameDate | date :'shortTime'}}</p>
+            </div>
+            <div class="col-xs-1">
+                <h1>{{game.score.awayTeamScore}}</h1>
+            </div>
+            <div class="col-xs-3" style="text-align: center">
+                <img [src]="game.awayTeam.logoUri" /> 
+                <h3>{{game.awayTeam.location}}</h3>
+            </div> 
+        </div>
+        <div class="row">
+            <div class="col-xs-3 invisible"></div>
+            <div class="col-xs-4">
+                <table class="table">
+                    <thead><tr>
+                        <th></th>
+                        <th *ngFor="let period of game.score.periodNames">{{period}}</th>
+                    </tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>{{game.homeTeam.shortName}}</td>
+                            <td *ngFor="let score of game.score.homeTeamTotalScores; let i = index;">
+                                {{ score }} (+{{ game.score.homeTeamPeriodScores[i] }})</td>
+                        </tr>
+                        <tr>
+                            <td>{{game.awayTeam.shortName}}</td>
+                            <td *ngFor="let score of game.score.awayTeamTotalScores; let i = index;">
+                                {{ score }} (+{{ game.score.awayTeamPeriodScores[i] }})</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+               
+        </div>
+</div>
