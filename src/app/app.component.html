@@ -1,35 +1,23 @@
-<!--<md-sidenav-container>
-  
-  <md-sidenav #sideNav class="app-sidenav" mode="push" >
-    <app-side-nav color="primary"></app-side-nav>
-  </md-sidenav>
-  <app-header (toggleSideNav)="sideNav.toggle()"></app-header>
-
-  <div class="app-content">
-    <router-outlet></router-outlet>
-  </div>
-</md-sidenav-container>
-
-<span class="app-action">
-  <button md-fab><md-icon>grid_on</md-icon></button>
-</span>-->
 <td-layout>
   <td-navigation-drawer sidenavTitle="BetSquare"   navigationRoute="/">
   </td-navigation-drawer>
   <div td-sidenav-content>
     <app-side-nav color="primary"></app-side-nav>
   </div>
-  <td-layout-nav logo="svgIconName" navigationRoute="/">
-    <div td-toolbar-content>
-      <app-header></app-header>
+  <td-layout-nav navigationRoute="/" toolbarTitle="BetSquares">
+    <div td-toolbar-content layout="row" layout-align="center center" flex>
+      <span flex></span><app-header></app-header>
     </div>
     <router-outlet></router-outlet>
     <td-layout-footer>
       <div layout="row" layout-align="start center">
-        <span class="md-caption">Copyright &copy; 2016 - 2017 Teradata. All rights reserved</span>
+        <span class="md-caption">Copyright &copy; 2017 - 2018 BetSquares. All rights reserved</span>
         <span flex></span>
-        <md-icon class="md-icon-ux" svgIcon="assets:teradata-ux"></md-icon>
+        <md-icon>airplay</md-icon>
       </div>
     </td-layout-footer>
   </td-layout-nav>
 </td-layout>
+<span class="app-action">
+  <button md-fab><md-icon>grid_on</md-icon></button>
+</span>

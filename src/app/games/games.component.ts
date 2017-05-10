@@ -6,12 +6,11 @@ import { IUser } from '../shared/models/IUser';
 import { IGridGamesByUser } from '../shared/models/igrid-game-by-user';
 import { IGridGame } from '../shared/models/igrid-game';
 import { IGameDisplayDetails} from '../shared/models/igames-display-details';
-import { Observable }     from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 import { AnonymousSubscription } from 'rxjs/Subscription';
 import { GridGamesService} from '../shared/services/grid-games.service';
 import { AuthenticationService} from '../shared/services/authentication.service';
 import { GamesService} from '../shared/services/games.service';
-import { TdDataTableService, TdDataTableSortingOrder, ITdDataTableSortChangeEvent, ITdDataTableColumn } from '@covalent/core';
 
 @Component ({
     moduleId: module.id,
@@ -30,7 +29,6 @@ export class GamesComponent implements OnInit {
     games: IGame[];
     filteredGames: IGame[];
     sortBy: string = 'sku';
-    sortOrder: TdDataTableSortingOrder = TdDataTableSortingOrder.Descending;
     gamesLabel : string;
 
     gamesDetail: IGameDisplayDetails;
@@ -71,10 +69,9 @@ export class GamesComponent implements OnInit {
 
   get selectedSchedule() : number { return this._selectedSchedule;}
 
-
   //#endregion
 
-  private loadGameDetails() :void {
+  private async loadGameDetails(): Promise<void> {
     this.isLoadingGames = true;
     this.gamesDetail = <IGameDisplayDetails>{
                     currentPeriod: 8,
@@ -165,7 +162,7 @@ export class GamesComponent implements OnInit {
         }, 3000)
         
     }, error => {
-      
+      this.filteredGames = [];
       this.isLoadingGames = false;
       // TODO: Handle error
       console.log('games received: ' + error);
