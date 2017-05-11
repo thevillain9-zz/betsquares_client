@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild  } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter  } from '@angular/core';
+import { ActivatedRoute, Router} from '@angular/router';
 import {MdMenuTrigger} from '@angular/material';
 
 @Component({
@@ -8,19 +9,19 @@ import {MdMenuTrigger} from '@angular/material';
 })
 export class SideNavComponent implements OnInit {
 
-  @ViewChild(MdMenuTrigger) trigger: MdMenuTrigger;
+  @Output() onCloseSideNav = new EventEmitter();
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
-// if(this.trigger  != null) {
-//       console.log("open menu");
-//       this.trigger.openMenu();
-//     }
   }
 
-  ngAfterViewInit() {
-    
+  public routeAndClose(route: string): void {
+    if(this.onCloseSideNav != null) {
+        this.onCloseSideNav.emit([]);
+    }
+    this.router.navigate([route]);
+
   }
 
 }

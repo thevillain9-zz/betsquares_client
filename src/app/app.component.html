@@ -1,12 +1,12 @@
-<td-layout>
+<td-layout #layout>
   <td-navigation-drawer sidenavTitle="BetSquare"   navigationRoute="/">
   </td-navigation-drawer>
   <div td-sidenav-content>
-    <app-side-nav color="primary"></app-side-nav>
+    <app-side-nav color="primary" (onCloseSideNav)="layout.close()"></app-side-nav>
   </div>
   <td-layout-nav navigationRoute="/" toolbarTitle="BetSquares">
     <div td-toolbar-content layout="row" layout-align="center center" flex>
-      <span flex></span><app-header></app-header>
+      <span flex></span><app-header ></app-header>
     </div>
     <router-outlet></router-outlet>
     <td-layout-footer>

@@ -10,7 +10,7 @@ import { AuthenticationService } from '../shared/services/authentication.service
 export class HeaderComponent implements OnInit {
 
   currentUser: IUser;
-  @Output() toggleSideNav = new EventEmitter();
+  
   constructor(private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
@@ -26,11 +26,7 @@ export class HeaderComponent implements OnInit {
     this.authenticationService.logout();
   }
 
-  public onToggleSideNav() {
-    if(this.toggleSideNav != null) {
-        this.toggleSideNav.emit([]);
-    }
-  }
+  
 
   private onUserChanged(user: IUser) {
     this.currentUser = user;

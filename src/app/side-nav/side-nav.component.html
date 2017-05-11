@@ -1,8 +1,8 @@
 <md-nav-list>
-  <a md-list-item (click)="layout.close()" [routerLink]="['/games']">
+  <a md-list-item (click)="routeAndClose('/games')">
     <h4>Games</h4>
   </a>
-  <a md-list-item (click)="layout.close()" [routerLink]="['/about']">
+  <a md-list-item (click)="routeAndClose('/about')">
     <h4>About</h4>
   </a>
 </md-nav-list>
