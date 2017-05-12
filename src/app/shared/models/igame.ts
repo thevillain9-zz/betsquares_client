@@ -8,4 +8,5 @@ export interface IGame {
     gameDate:string;
     isActive:boolean;
     score: IScore;
+    gamePeriod: number;
 }

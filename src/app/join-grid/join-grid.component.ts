@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IGame } from '../shared/models/IGame';
 import { ActivatedRoute } from '@angular/router';
 import { Observable }     from 'rxjs/Observable';
+import { IStepChangeEvent, StepState, TdStepComponent } from '@covalent/core';
 
 @Component({
   selector: 'app-join-grid',
@@ -10,24 +11,36 @@ import { Observable }     from 'rxjs/Observable';
 })
 export class JoinGridComponent{
     game: IGame;
-    is_initial_row_visible: Boolean;
-    is_new_game_visibile: Boolean;
-    errorMessage: string;
+
+    @ViewChild('step1') step1: TdStepComponent;
+    @ViewChild('step2') step2: TdStepComponent;
+
+    isStep1Active: Boolean = true;
+    isStep2Active: Boolean = false;
+    isStep3Active: Boolean = false;
+    step1State: StepState = StepState.None;
+    step2State: StepState = StepState.None;
+    step3State: StepState = StepState.None;
 
     constructor(private route: ActivatedRoute) {
-        this.is_initial_row_visible = true;
-        this.is_new_game_visibile = false;
     }
 
     ngOnInit() {
-        this.route.data.forEach((data : {games: Observable<IGame>}) => {
-            data.games.subscribe(game => this.game = game, error => this.errorMessage = <any>error);
-        })
+        // this.route.data.forEach((data : {games: Observable<IGame>}) => {
+        //     data.games.subscribe(game => this.game = game, error => this.errorMessage = <any>error);
+        // })
     }
 
     loadNewGame() {
-        this.is_initial_row_visible = false;
-        this.is_new_game_visibile = true;
+        //this.step1State = StepState.Complete;
+        this.isStep1Active = false;
+        this.step1.close();
+        this.isStep2Active = true;
+        this.step2.open();
+    }
+
+    onStepChanged(event: IStepChangeEvent) {
+            console.log("onStepChanged: " + event.newStep.active);
     }
 
 }

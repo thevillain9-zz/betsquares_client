@@ -1,21 +1,38 @@
-<div fxLayout="row" fxLayoutAlign="space-around none">
-    <md-card>
-        <md-card-title>Start a Grid</md-card-title>
-        <md-card-content>
-            <p>Setup a brand new grid that you can invite your friends to participate in</p>
-            <button md-raised-button color="accent" (click)="loadNewGame()" >New</button>                        
-        </md-card-content>
-    </md-card>
-    <md-card>
-        <md-card-title>Join a Grid</md-card-title>
-        <md-card-content>
-            <p>Find a grid to join that has available squares</p>
-            <button md-raised-button color="accent" (click)="loadNewGame()" >Join</button>
-            <button md-raised-button color="accent" (click)="loadNewGame()" >Join Existing</button>
-        </md-card-content>
-    </md-card>
+<td-steps mode='horizontal' (stepChange)="onStepChanged($event)">
+  <td-step #step1 label="Join Grid" sublabel="" [active]="isStep1Active" [disabled]="!isStep1Active" [state]="step1State">
+    <div fxLayout="row">
+        <md-card>
+            <md-card-title>Start a Grid</md-card-title>
+            <md-card-content>
+                <p>Setup a brand new grid that you can invite your friends to participate in</p>
+                <div td-step-actions>
+                <button md-raised-button color="accent" (click)="loadNewGame()" >New</button>                        
+
+                </div>
+            </md-card-content>
+        </md-card>
+        <md-card>
+            <md-card-title>Join a Grid</md-card-title>
+            <md-card-content>
+                <p>Find a grid to join that has available squares</p>
+                <div td-step-actions>
+                    <button md-raised-button color="accent" (click)="loadNewGame()" >Join</button>
+                    <button md-raised-button color="accent" (click)="loadNewGame()" >Join Existing</button>
+                </div>
+            </md-card-content>
+        </md-card>    
+    </div>
+  </td-step>
+  <td-step #step2 [active]="isStep2Active" [disabled]="!isStep2Active" [state]="step2State"
+  label="step2Label" >
+    This step is required!
+  </td-step>
+  <td-step #step3 label="Squares" [active]="isStep3Active" [disabled]="!isStep3Active" [state]="step3State">
+    Mark this step complete and get a summary
     
-</div>
+  </td-step>
+</td-steps>
+
 
 
 <!--<div class="row" *ngIf="is_initial_row_visible">

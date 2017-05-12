@@ -12,12 +12,12 @@ export class GridGamesService {
     }
 
     getGridGamesByGameId(gameId) {
-        var url = 'http://localhost:3009/api/gridGame/gameId/' + gameId;
+        let url = 'http://localhost:3009/api/gridGame/gameId/' + gameId;
         return this.http.get(url).map(this.extractData).catch(this.handleError);
     }
 
     getGridGamesByUserId(userId) {
-        var url = 'http://localhost:3009/api/gridgame/userId/' + userId;
+        let url = 'http://localhost:3009/api/gridgame/userId/' + userId;
         return this.http.get(url).map(this.extractData).catch(this.handleError);
     }
 

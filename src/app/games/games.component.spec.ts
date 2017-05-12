@@ -1,25 +1,32 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed, async,  } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MaterialModule} from '@angular/material';
+import { CovalentCoreModule,CovalentLayoutModule, CovalentSearchModule } from '@covalent/core';
 
 import { GamesComponent } from './games.component';
 
-describe('GamesComponent', () => {
-  let component: GamesComponent;
-  let fixture: ComponentFixture<GamesComponent>;
+import { AuthenticationService } from '../shared/services/authentication.service';
 
+describe('AppComponent', () => {
   beforeEach(async(() => {
+
+    // stub UserService for test purposes
+    const authenticateionServiceStub = {};
+
     TestBed.configureTestingModule({
-      declarations: [ GamesComponent ]
-    })
-    .compileComponents();
+      providers: [
+        {provide: AuthenticationService, useValue: authenticateionServiceStub }
+      ],
+      imports : [CovalentCoreModule, CovalentLayoutModule, MaterialModule.forRoot(), RouterTestingModule ],
+      declarations: [
+        GamesComponent
+      ],
+    }).compileComponents();
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(GamesComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create', async(() => {
+    const fixture = TestBed.createComponent(GamesComponent);
+    const gamesComponent = fixture.debugElement.componentInstance;
+    expect(gamesComponent).toBeTruthy();
+  }));
 });

@@ -108,7 +108,7 @@ export class LoginComponent implements OnInit {
         
         this.isLoading = false;
         this.isErrorState = true;
-        var response = <ILoginResponse>error;
+        let response = <ILoginResponse>error;
         if(response) {
           if(response.status == 404) {
             this.errorMessage = response.message;
