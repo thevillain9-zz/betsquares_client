@@ -36,7 +36,7 @@ export class JoinGridComponent{
         this.isStep1Active = false;
         this.step1.close();
         this.isStep2Active = true;
-        this.step2.open();
+        this.step2.stepActions = 
     }
 
     onStepChanged(event: IStepChangeEvent) {
