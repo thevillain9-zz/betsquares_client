@@ -12,25 +12,24 @@ export class AuthenticationService {
 
     constructor(private http: Http) { }
 
-    public getCurrentUser() : IUser
+    public getCurrentUser(): IUser
     {
-        if(localStorage.getItem('currentUser'))
+        if (localStorage.getItem('currentUser'))
         {
             return JSON.parse(localStorage.getItem('currentUser'));
-        }
-        else {
+        } else {
             return null;
         }
     }
  
-    public login(username: string, password: string) : Observable<ILoginResponse> {
-        let headers = new Headers({ 'Content-Type': 'application/json' });
-        let options = new RequestOptions({ headers: headers }); 
-        let body = JSON.stringify({ username: username, password: password });
+    public login(username: string, password: string): Observable<ILoginResponse> {
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        const options = new RequestOptions({ headers: headers }); 
+        const body = JSON.stringify({ username: username, password: password });
         return this.http.post('http://localhost:3009/api/users/authenticate',body, options)
                         .map((response: Response) => {
                             // login successful if there's a jwt token in the response
-                            let loginResponse = <ILoginResponse>response.json();
+                            const loginResponse = <ILoginResponse>response.json();
                             if (loginResponse && loginResponse.token) {
                                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                                 localStorage.setItem('currentUser', JSON.stringify(loginResponse.user));
@@ -41,9 +40,8 @@ export class AuthenticationService {
                         }).catch((error: Response | any) => {
                             let errMsg = <ILoginResponse>{ status: 0, statusText: "", success: false, message: "", token: "", user: null};
                             if (error instanceof Response) {
-                                
-                                let body = <ILoginResponse>error.json();
-                                if(body != undefined) {
+                                const body = <ILoginResponse>error.json();
+                                if(body !== undefined) {
                                     errMsg = body;
                                 }
                                 errMsg.status = error.status;
@@ -54,7 +52,7 @@ export class AuthenticationService {
                             return Observable.throw(errMsg);
                         });
     }
- 
+
     public logout() {
 
         // remove user from local storage to log user out

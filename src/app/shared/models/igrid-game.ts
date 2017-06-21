@@ -5,14 +5,9 @@ import { IGridBox } from './igrid-box';
 
 export interface IGridGame {
     gridGameId: number;
-    name : String;
-    //accessCode : String;
-    //owner : IUser;
-    //game : IGame;
-    boxes: IGridBox[]
-}
-
-export interface IGridGamesByUser {
+    name: String;
+    password: String;
+    owner: IUser;
     game: IGame;
-    gridGames: IGridGame[];
+    boxes: IGridBox[];
 }

@@ -1,4 +1,4 @@
 export class GamesRequest {
     currentPeriod: number;
-    games: number[];
+    games: number[] = new Array();
 }

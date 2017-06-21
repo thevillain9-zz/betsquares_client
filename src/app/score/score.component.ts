@@ -23,7 +23,7 @@ export class ScoreComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         for(let propName in changes) {
-            if(propName == "homeTeamScore"
+            if(propName === "homeTeamScore"
                 && !changes[propName].firstChange
                 && changes[propName].previousValue != changes[propName].currentValue) {
                 this.isHomeTeamScoreUpdated = true;
@@ -32,7 +32,7 @@ export class ScoreComponent implements OnInit, OnChanges {
                     this.isHomeTeamScoreUpdated = false;
                 }, this.scoreBgUpdate);
             }
-            else if(propName == "awayTeamScore"
+            else if(propName === "awayTeamScore"
                 && !changes[propName].firstChange
                 && changes[propName].previousValue != changes[propName].currentValue) {
                 this.isAwayTeamScoreUpdated = true;

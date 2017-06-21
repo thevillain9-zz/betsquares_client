@@ -30,7 +30,7 @@
         <md-card>
              <md-card-header>
                 <div md-card-avatar class="example-header-image"></div>
-                <md-card-title>Shiba Inu</md-card-title>
+                <md-card-title><span *ngIf="currentUser">{{currentUser.firstName}} {{currentUser.lastName}}</span></md-card-title>
             </md-card-header>
             <md-icon>account_circle</md-icon>
             <md-card-content>
@@ -46,7 +46,7 @@
       <md-icon>account_circle</md-icon>
     </button>
 
-    <a mdToolTip="Sign In" md-raised-button color="primary" [routerLink]="['/login']">Sign In</a>
+    <a *ngIf="currentUser === null || currentUser === undefined" mdToolTip="Sign In" md-raised-button color="primary" [routerLink]="['/login']">Sign In</a>
 </div>
     
     

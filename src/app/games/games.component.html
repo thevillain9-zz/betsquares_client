@@ -1,10 +1,14 @@
 <md-card>
   <div layout="row" layout-align="start center" class="pad-left-sm pad-right-sm">
-    <span *ngIf="!searchBox.searchVisible" class="push-left-sm">
+    <span *ngIf="!searchBox?.searchVisible" class="push-left-sm">
       <span class="md-title">Games</span>
     </span>
-    
-    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search" (searchDebounce)="search($event)" flex>
+    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search" flex
+      (searchDebounce)="searchInputTerm = $event" 
+      (search) ="searchInputTerm = $event"
+      (clear)="searchInputTerm = ''"
+       autocomplete="off"
+      >
     </td-search-box>
     <div *ngIf="gamesDetail">
       <md-select placeholder="Week" floatPlaceholder="never" [(ngModel)]="selectedSchedule" class="scheduleInput">
@@ -12,8 +16,8 @@
       </md-select>
     </div>
   </div>
-  <md-divider *ngIf="isLoadingGames || filteredGames?.length == 0"></md-divider>
-  <div *ngIf="!isLoadingGames && filteredGames?.length == 0" layout="row" layout-align="center center">
+  <md-divider *ngIf="isLoadingGames || filteredGames?.length === 0"></md-divider>
+  <div *ngIf="!isLoadingGames && filteredGames?.length === 0" layout="row" layout-align="center center">
       <h3>No games found.</h3>
   </div>
   <div *ngIf="isLoadingGames" layout="column" layout-align="center center">

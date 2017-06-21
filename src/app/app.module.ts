@@ -56,7 +56,7 @@ import {environment} from '../environments/environment';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    MaterialModule.forRoot(),
+    MaterialModule,
     CovalentCoreModule,
     CovalentLayoutModule,CovalentSearchModule,
     //FlexLayoutModule,

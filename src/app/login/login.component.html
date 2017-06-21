@@ -12,9 +12,10 @@
     </md-card>
 
     <!--Remove and fix fxLayoutAlign-->
-    <p></p>       
+    <p></p>
 
     <md-card>
+        <form novalidate [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <md-card-title>Login</md-card-title>
         <md-card-content>
             <div>
@@ -23,7 +24,7 @@
                     <p class="savingLabel"></p>
                 </div>          
                 <div [hidden]="isLoading">
-                    <form novalidate [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    
                         <md-input-container>
                             <input mdInput placeholder="Username" required formControlName="username">
                             <md-error>Username is required</md-error>
@@ -33,14 +34,15 @@
                             <input type="password" mdInput required placeholder="Password" formControlName="password"> 
                             <md-error>Password is required</md-error>
                         </md-input-container>
-
-                        <p>
-                            <button md-raised-button color="primary" type="submit">Login</button>
-                            <button md-raised-button color="accent" [routerLink]="['/register']">Register</button>
-                        </p>
-                    </form>
+                    
                 </div>
             </div>
-        </md-card-content>  
+        </md-card-content>
+        <!--<md-divider></md-divider>-->
+        <md-card-actions>
+            <button md-raised-button color="primary" type="submit">Login</button>
+            <button md-raised-button color="accent" router-link="['/signup']">Register</button>
+        </md-card-actions>
+        </form>
     </md-card>
 </div>

@@ -1,112 +1,147 @@
-<td-steps mode='horizontal' (stepChange)="onStepChanged($event)">
-  <td-step #step1 label="Join Grid" sublabel="" [active]="isStep1Active" [disabled]="!isStep1Active" [state]="step1State">
+<td-steps mode='horizontal'>
+  <td-step #step1 label="Join GridIron" sublabel="">
     <div fxLayout="row">
         <md-card>
-            <md-card-title>Start a Grid</md-card-title>
+            <md-card-title>Start a Grid Iron Game</md-card-title>
             <md-card-content>
-                <p>Setup a brand new grid that you can invite your friends to participate in</p>
                 <div td-step-actions>
-                <button md-raised-button color="accent" (click)="loadNewGame()" >New</button>                        
-
+                    Setup a brand new Grid Iron game that you can invite your friends to participate in
                 </div>
             </md-card-content>
+            <md-card-actions>
+                <button md-raised-button color="accent" (click)="joinGame(1,false)" >New</button>                        
+            </md-card-actions>
         </md-card>
         <md-card>
-            <md-card-title>Join a Grid</md-card-title>
+            <md-card-title>Join a GridIron Game</md-card-title>
             <md-card-content>
-                <p>Find a grid to join that has available squares</p>
                 <div td-step-actions>
-                    <button md-raised-button color="accent" (click)="loadNewGame()" >Join</button>
-                    <button md-raised-button color="accent" (click)="loadNewGame()" >Join Existing</button>
+                    Find a grid to join that has available squares
                 </div>
             </md-card-content>
+            <md-card-actions>
+                <button md-raised-button color="accent" (click)="joinGame(1,true)">Join</button>
+            </md-card-actions>
         </md-card>    
     </div>
   </td-step>
-  <td-step #step2 [active]="isStep2Active" [disabled]="!isStep2Active" [state]="step2State"
-  label="step2Label" >
-    This step is required!
+  <td-step #step2  label="Setup GridIron" >
+    <md-card *ngIf="isNewGridVisible">
+        <md-card-title-group>
+            <md-card-title>New Grid Game</md-card-title>
+            <md-card-subtitle>
+                <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
+        </md-card-title-group>
+        <md-card-content>
+            <div>
+                <form novalidate [formGroup]="setupGridGameForm" (ngSubmit)="onSubmit()">
+                    <div layout="row">
+                        <md-input-container>
+                            <input mdInput placeholder="GridIron Name" required formControlName="name" autocomplete="off">
+                            <md-error>{{formErrors['name']}}</md-error>
+                        </md-input-container>
+                    </div>
+                    <div>
+                        <md-input-container>
+                            <input type="password" mdInput required placeholder="Password" formControlName="password"> 
+                            <md-error>{{formErrors['password']}}</md-error>
+                        </md-input-container>
+                        <md-input-container>
+                            <input type="password" mdInput required placeholder="Confirm Password" formControlName="passwordConfirm"> 
+                            <md-error>{{formErrors['passwordConfirm']}}</md-error>
+                        </md-input-container>
+                    </div>
+                    <!--<div>
+                        <md-input-container>
+                            <input mdInput placeholder="Setup fee" required formControlName="fee"  autocomplete="off">
+                            <md-error>{{formErrors['fee']}}</md-error>
+                        </md-input-container>
+                    </div>-->
+                </form>
+            </div>
+        </md-card-content>
+        <md-card-actions>
+            <button md-raised-button color="accent" type="submit"  (click)="joinGame(2,false)">Continue</button>
+        </md-card-actions>
+    </md-card>
+    <md-card *ngIf="isJoinGridVisible">
+        <md-card-title-group>
+            <md-card-title>Join GridIron Game</md-card-title>
+            <md-card-subtitle>
+                <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
+        </md-card-title-group>        
+        <md-card-content>
+             <div>
+                <form novalidate [formGroup]="joinGridIronGameForm" (ngSubmit)="onSubmit()">
+                    <div layout="row">
+                        <md-input-container>
+                            <input mdInput placeholder="GridIron ID" required formControlName="gridIronGameId" autocomplete="off">
+                            <md-error>{{formErrors['gridIronGameId']}}</md-error>
+                        </md-input-container>
+                    </div>
+                    <div>
+                        <md-input-container>
+                            <input type="password" mdInput required placeholder="Password" formControlName="joinPassword"> 
+                            <md-error>{{formErrors['joinPassword']}}</md-error>
+                        </md-input-container>
+                    </div>
+                </form>
+            </div>
+        </md-card-content>
+        <md-card-actions>
+            <button md-raised-button color="accent" type="submit" (click)="joinGame(2,true)">Join</button>
+        </md-card-actions>
+    </md-card>
+
   </td-step>
-  <td-step #step3 label="Squares" [active]="isStep3Active" [disabled]="!isStep3Active" [state]="step3State">
-    Mark this step complete and get a summary
+  <td-step #step3 label="Squares" >
+    <md-card>
+        <md-card-title-group>
+            <md-card-title>How many squares?</md-card-title>
+            <md-card-subtitle>
+                <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
+        </md-card-title-group>
+        
+        <md-card-content>
+            <div>
+                <span>Seleted Squares:</span>
+                <span>{{selectedSquareSlide.value}}</span>
+            </div>
+            <div>
+                <md-slider #selectedSquareSlide
+                    [max]="maxSquaresAvailable"
+                    [min]="1"
+                    [step]="1"
+                    [thumb-label]="true"
+                    [value]="selectedSquares">
+                </md-slider>
+                <span>{{maxSquaresAvailable}}</span>
+            </div>
+        </md-card-content>
+        <md-card-actions>
+            <button md-raised-button color="accent" (click)="joinGame(3)">Register</button>
+        </md-card-actions>
+    </md-card>
+    
+  </td-step>
+  <td-step #step4 label="Finished" >
+    <md-card>
+        <md-card-title-group>
+            <md-card-title>How many squares?</md-card-title>
+            <md-card-subtitle>
+                <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
+        </md-card-title-group>
+        
+        <md-card-content>
+            <div>
+            
+            </div>
+        </md-card-content>
+        <md-divider></md-divider>
+        <md-card-actions>
+            
+        </md-card-actions>
+    </md-card>
     
   </td-step>
 </td-steps>
-
-
-
-<!--<div class="row" *ngIf="is_initial_row_visible">
-    <div class="col-sm-4">
-        
-        
-    </div>
-    <div class="col-sm-4">
-        <div class="card card-block">
-            <h3 class='card-title'>Join Public</h3>
-            <p class='card-text'></p>
-            <a [routerLink]="['/games']"><button type='button' class='btn btn-info'>Join</button></a>                        
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card card-block">
-            <div class="form-group row">
-            <div class="col-xs-12"><h3 class='card-title'>Join Private</h3></div>
-            </div>
-            <div class="form-group row">
-            <label for="example-text-input" class="col-xs-4 col-form-label">Gridiron ID</label>
-            <div class="col-xs-8"><input class="form-control" type="text" value="" id="game-id-input"></div>
-            </div>
-            <div class="form-group row " style="Display: none;">
-            <div class="col-xs-4 col-form-label">Game</div>
-            <div class="col-xs-8"></div>
-            </div>
-            <div class="form-group row">
-            <label for="example-text-input" class="col-xs-4 col-form-label">Password</label>
-            <div class="col-xs-8"><input class="form-control" type="password" value="" id="game-id-input"></div>
-            </div>
-            <div class="form-group row">
-            <div class="col-xs-4"></div>
-            <div class="col-xs-8"><button type='button' class='btn btn-primary'>Join</button></div>
-            </div>
-        </div>
-        </div>    
-</div>
-
-<div class="row" *ngIf="is_new_game_visibile">
-    <div class="col-sm-3"></div>
-    <div class="col-sm-6">
-        <div class="card card-block">
-            <div class="form-group row">
-            <div class="col-xs-12"><h3 class='card-title'>New Gridiron Game</h3></div>
-            </div>
-            <div class="form-group row">
-            <label for="example-text-input" class="col-xs-4 col-form-label">Game</label>
-            <div class="col-xs-8"><p></p></div>
-            </div>
-            <div class="form-group row " style="Display: none;">
-            <div class="col-xs-4 col-form-label">Game</div>
-            <div class="col-xs-8">
-                <p>{{game.home_team.location}} vs {{game.away_team.location></p>
-                <p>{{game.home_team.location}} vs {{game.away_team.location></p>            
-            </div>
-            </div>
-            <div class="form-group row">
-                <label for="example-text-input" class="col-xs-4 col-form-label">Password</label>
-                <div class="col-xs-8"><input class="form-control" type="input" value="" id="sqgame-pwd-input"></div>
-            </div>
-            <div class="form-group row">
-                <label for="example-text-input" class="col-xs-4 col-form-label">Max Squares/Person</label>
-                <div class="col-xs-8"><input class="form-control" type="input" value="" id="sqgame-maxsq-input"></div>
-            </div>
-            <div class="form-group row">
-                <label for="example-text-input" class="col-xs-4 col-form-label">Notes</label>
-                <div class="col-xs-8"><input class="form-control" type="input" value="" id="sqgame-notes-input"></div>
-            </div>
-            <div class="form-group row">
-            <div class="col-xs-4"></div>
-            <div class="col-xs-8"><button type='button' class='btn btn-primary'>Create</button></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-3"></div>    
-</div>-->

@@ -26,10 +26,10 @@ export class GamesService extends ServiceBase {
         return this.http.post(url, request, this.getAuthorizationHeaders()).map(this.extractData).catch(this.handleError);
     }
 
-    getGame(gameId) : Observable<IGame> {
+    getGame(gameId): Observable<IGame> {
         let request = new GamesRequest();
         request.games.push(gameId);
-        let url = 'http://localhost:3009/api/games/' + gameId;
+        let url = 'http://localhost:3009/api/games/';
         return this.http.post(url, request, this.getAuthorizationHeaders()).map(this.extractData).catch(this.handleError);
     }
 
