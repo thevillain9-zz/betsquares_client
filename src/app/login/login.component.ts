@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Http } from '@angular/http';
-import { AuthenticationService } from '../shared/services/authentication.service';
+import { IUsersService } from '../shared/services/users.service.interface';
+import { UsersServiceToken } from '../shared/services/users.service.token';
 import { IUser} from '../shared/models/IUser';
 import { MdSnackBar} from '@angular/material';
 import { ILoginResponse } from '../shared/models/ilogin-response';
@@ -34,12 +35,11 @@ export class LoginComponent implements OnInit {
   };
 
   constructor(public route: ActivatedRoute, public router: Router, public http: Http,
-    public authenticationService: AuthenticationService,
+    @Inject(UsersServiceToken) private usersService: IUsersService,
     public fb: FormBuilder,
-    private _snackbar: MdSnackBar)
-    {
+    private _snackbar: MdSnackBar) {
       // reset login status
-      this.authenticationService.logout();
+      this.usersService.logout();
 
 
   }
@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit {
     console.log('Login isValid=' + isValidForm);
 
     this.isLoading = true;
-    this.authenticationService.login(this.loginForm.value.username, this.loginForm.value.password).subscribe((result) => {
+    this.usersService.login(this.loginForm.value.username, this.loginForm.value.password).subscribe((result) => {
         this.isLoading = false;
         if (result.success) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes

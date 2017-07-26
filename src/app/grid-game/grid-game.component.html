@@ -1,0 +1,46 @@
+
+<app-game [game]="gridGame.game"></app-game>
+
+<p></p>
+
+<md-card>
+  <md-card-content>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <div fxFlex="5"> 
+        <!-- Logo -->
+        <!-- <img [src]="gridGame.game.awayTeam.logoUri"  aria-label="gridGame.game.awayTeam.location" /> -->
+        <div class="away-team-label team-label">{{gridGame.game.awayTeam.location}}</div>
+      </div>
+      <div fxFlex="95">
+        <div fxLayout="column">
+            <div fxFlex="5">
+              <div fxLayout="row" fxLayoutAlign="center center"> 
+                <!-- <img [src]="gridGame.game.homeTeam.logoUri" aria-label="gridGame.game.homeTeam.location" /> -->
+                <div class="team-label">{{gridGame.game.homeTeam.location}}</div>
+              </div>
+            </div>
+            <div fxFlex="95">
+              <table class="grid-game-table">
+                <thead>
+                  <tr>
+                    <td class="grid-cell-score"></td>
+                    <td class="mat-cell grid-cell-score" *ngFor="let score of scoreNumbers; let i = index;">{{ score }}</td>
+                  </tr>
+                </thead>
+                <tr *ngFor="let xScore of scoreNumbers; let x = index;">
+                    <td class="mat-cell grid-cell-score">{{xScore}}</td>
+                    <td class="mat-cell" *ngFor="let yScore of scoreNumbers; let y = index;" [class.grid-cell-winner]="gridGame.boxes[x*10+y].isWinner">
+                      <!-- {{x*10+y}} -->
+                      {{gridGame.boxes[x*10+y]?.userId.initials}} 
+                    </td>
+                </tr>
+              </table>
+            </div>
+        </div> 
+        
+
+      </div>
+    </div>
+    
+  </md-card-content>
+</md-card>

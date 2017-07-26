@@ -1,17 +1,20 @@
-import { Component, OnInit, ViewChild,  } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterStateSnapshot } from '@angular/router';
 import { MdSnackBar} from '@angular/material';
 import { Observable } from 'rxjs/Observable';
-import { IStepChangeEvent, StepState, TdStepComponent } from '@covalent/core';
-
+import { environment } from '../../environments/environment';
 import { IGridGame } from '../shared/models/igrid-game';
 import { IGame } from '../shared/models/igame';
 import { IUser } from '../shared/models/iuser';
 import { IGridBox } from '../shared/models/igrid-box';
-import { GamesService } from '../shared/services/games.service';
-import { GridGamesService } from '../shared/services/grid-games.service';
-import { AuthenticationService } from '../shared/services/authentication.service';
+import { IGridGamesService } from '../shared/services/grid-games.service.interface';
+import { GridGamesServiceToken } from '../shared/services/grid-games.service.token';
+import { IUsersService } from '../shared/services/users.service.interface';
+import { UsersServiceToken } from '../shared/services/users.service.token';
+import { IGamesService } from '../shared/services/games.service.interface';
+import { GamesServiceToken } from '../shared/services/games.service.token';
+import { PasswordValidation } from '../shared/validators/passwordValidation';
 
 @Component({
   selector: 'app-join-grid',
@@ -22,15 +25,13 @@ export class JoinGridComponent implements OnInit {
 
     setupGridGameForm: FormGroup;
     joinGridIronGameForm: FormGroup;
-    @ViewChild('step1') step1: TdStepComponent;
-    @ViewChild('step2') step2: TdStepComponent;
-    @ViewChild('step3') step3: TdStepComponent;
-    @ViewChild('step4') step4: TdStepComponent;
+
     gameLabel: String = 'Game';
     isErrorState: Boolean = false;
     errorMessage = '';
     isNewGridVisible: Boolean = false;
     isJoinGridVisible: Boolean = false;
+    isSaving: Boolean = false;
     maxSquaresAvailable: Number = 100;
     selectedSquares: Number = 1;
     game: IGame;
@@ -52,10 +53,12 @@ export class JoinGridComponent implements OnInit {
     'password': {
       'required': 'password is required.',
       'minlength': '6 character minimum',
-      'passwordRequirements': '6 character minimum + alphanumeric characters'
+      'validateEqual': 'passwords do not match'
     },
     'passwordConfirm': {
-      'validateEqual': 'passwords do not match'
+      'required': 'password is required.',
+      'validateEqual': 'passwords do not match',
+      'minlength': '6 character minimum',
     },
     'fee': {
       'pattern': 'Fee must be a positive number'
@@ -69,20 +72,21 @@ export class JoinGridComponent implements OnInit {
   };
 
 
+
+
     constructor(private route: ActivatedRoute,
     private router: Router,
     public fb: FormBuilder,
     private _snackbar: MdSnackBar,
-    private gamesService: GamesService,
-    private gridGamesDataService: GridGamesService,
-    private authenticationService: AuthenticationService
-    ) {
-    }
+    @Inject(GamesServiceToken) private gamesDataService: IGamesService,
+    @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
+    @Inject(UsersServiceToken) private usersService: IUsersService) {
+  }
 
     ngOnInit() {
 
       // get current user
-      this.currentUser = this.authenticationService.getCurrentUser();
+      this.currentUser = this.usersService.getCurrentUser();
       if (this.currentUser === undefined || this.currentUser === null) {
           // redirect to login
           this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.routerState.snapshot.url }});
@@ -90,15 +94,29 @@ export class JoinGridComponent implements OnInit {
 
       // validate parameters
       this.route.params.subscribe((params: Params) => {
-            const gameId = params['gameid'];
-            this.gamesService.getGame(gameId).subscribe((data: IGame) => {
-              this.game = data;
+            const keyParams = Object.keys(params);
+            if (keyParams.includes('gridgameid')) {
+              const gridGameId = +params['gridgameid'];
               this.initializeWizard();
-            }, (error) => {
-
-              // redirect to select a game
+            } else if (keyParams.indexOf('gameid') >= 0) {
+              const gameId = +params['gameid'];
+              this.gamesDataService.getGame(gameId).subscribe((data) => {
+                this.game = data;
+                if (this.game === null || this.game === undefined) {
+                  // redirect to select a game
+                  this.router.navigate(['/games']);
+                } else {
+                  this.initializeWizard();
+                }
+              }, (error) => {
+                console.log('JoinGrid Error:' + error);
+                // redirect to select a game
+                this.router.navigate(['/games']);
+              });
+            } else {
+              console.log('JoinGrid Error: lack of parameters: ' + keyParams);
               this.router.navigate(['/games']);
-            });
+            }
         });
     }
 
@@ -107,96 +125,66 @@ export class JoinGridComponent implements OnInit {
       this.buildForm();
 
       // Initialize stepper state
-      this.step1.active = true;
-      const disableSteps = [ this.step2, this.step3, this.step4];
-      disableSteps.forEach(step => {
-        step.active = false;
-        step.disabled = true;
-        step.state = StepState.None;
-      });
+      
     }
 
     private buildForm(): void {
       const tempDate = new Date(this.game.gameDate);
-      console.log(tempDate.toDateString());
       const gridGameName = this.currentUser.firstName + '\'s ' + this.game.awayTeam.shortName + ' vs ' +
                            this.game.homeTeam.shortName + ' Game on ' + tempDate.toLocaleDateString();
       this.setupGridGameForm = this.fb.group({
         'name': [gridGameName, [Validators.required, Validators.minLength(5)]],
-        'password': ['', [Validators.required, Validators.minLength(5)]],
-        'passwordConfirm': ['', [Validators.required, this.passwordMatchValidate(() => {
-          if (this.setupGridGameForm != null && this.setupGridGameForm.controls != null) {
-            return this.setupGridGameForm.controls['password'].value;
-          } else {
-            return null;
-          }
-        })]],
+        'password': ['', [Validators.required, Validators.minLength(6)]],
+        'passwordConfirm': ['', [Validators.required, Validators.minLength(6)]],
         'fee': ['10']
-      });
+      }, {validator: (x) => PasswordValidation.MatchPassword(x, 'password', 'passwordConfirm', 'validateEqual')});
 
       this.joinGridIronGameForm = this.fb.group({
-        'gridIronGameId': ['',[Validators.required]],
-        'joinPassword': ['',[Validators.required]],
+        'gridIronGameId': ['test', [Validators.required, Validators.minLength(6)]],
+        'joinPassword': ['', [Validators.required, Validators.minLength(6)]],
       });
 
-      this.setupGridGameForm.valueChanges.subscribe(data => this.onValidateSetupGridForm(data));
+      this.setupGridGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.setupGridGameForm, data));
+      this.joinGridIronGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.joinGridIronGameForm, data));
 
       // resets validation
-      this.onValidateSetupGridForm();
+      this.onValidateGridForm(this.setupGridGameForm);
   }
 
-  passwordValidation(): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: Boolean} => {
-      const pwd = control.value;
-      return {'passwordRequirements': true};
-    };
-  }
 
-  passwordMatchValidate(getActualValue: () => string): ValidatorFn {
-    return (control: AbstractControl): {[key: string]: Boolean} => {
-      const matchPassword = control.value;
-      const actualPassword = getActualValue();
-
-      // value not equal
-      if (matchPassword !== actualPassword) {
-        return {
-          'validateEqual': false
-        };
-      } else {
-          return null;
-      }
-    };
-}
-
-  private onValidateSetupGridForm(data?: any): boolean {
+  private onValidateGridForm(formGroup: FormGroup, data?: any): boolean {
     let isValidForm = true;
-    if (!this.setupGridGameForm) {
-      return isValidForm;
+    if (formGroup === null) {
+      return false;
     }
-    const form = this.setupGridGameForm;
     const errorFields = [];
-    for (const field in this.formErrors) {
+    const keys = Object.keys(this.formErrors);
+    for (let i = 0; i < keys.length; i++) {
+      const field = keys[i];
 
       // clear previous error message (if any)
       this.formErrors[field] = '';
-      const control = form.get(field);
+
+      const control = formGroup.get(field);
 
       if (control && control.dirty && !control.valid) {
         const messages = this.validationMessages[field];
         if (messages !== undefined) {
           for (const key in control.errors) {
-            if(messages[key] !== undefined && messages[key] !== null) {
-              this.formErrors[field] += messages[key] + ' ';
+
+            if (messages[key] !== undefined && messages[key] !== null) {
+              this.formErrors[field] += messages[key];
               errorFields.push(field);
               if (isValidForm) {
                 isValidForm = false;
               }
+              break;
             }
           }
         }
-
       }
     }
+
     if (errorFields.length > 0) {
       this.isErrorState = true;
       this.errorMessage = 'Please fix the following fields: ' + errorFields.join(',');
@@ -209,8 +197,14 @@ export class JoinGridComponent implements OnInit {
   }
 
     joinGame(step: Number, isExistingGame: Boolean) {
+      if (!environment.production) {
+        console.log('joinGame('+ step + ',' + isExistingGame + ')');
+      }
+
+
+
       if (step === 1) {
-        if(isExistingGame) {
+        if (isExistingGame) {
           this.isJoinGridVisible = true;
         } else {
           this.isNewGridVisible = true;
@@ -233,47 +227,54 @@ export class JoinGridComponent implements OnInit {
           this.onAdvanceToStep(3);
         } else {
           // validate is valid gridIron game
-          let gridIronGameId = this.joinGridIronGameForm.controls['gridIronGameId'].value;
-          let joinPassword = this.joinGridIronGameForm.controls['joinPassword'].value;
-          this.gridGamesDataService.getGridGameByGridGameId(parseInt(gridIronGameId), joinPassword).subscribe((data: any) => {
+          const gridIronGameId = this.joinGridIronGameForm.controls['gridIronGameId'].value;
+          const joinPassword = this.joinGridIronGameForm.controls['joinPassword'].value;
+          this.gridGamesDataService.getGridGameByGridGameId(parseInt(gridIronGameId, 10), joinPassword).subscribe((data: any) => {
             this.onAdvanceToStep(3);
           }, (error) => {
             this.onAdvanceToStep(3);
           });
         }
       } else if (step === 3 ) {
-
+        this.isSaving = true;
+        this.onAdvanceToStep(4);
+        console.log('saving....');
+        setTimeout(() => {
+          console.log('save finished');
+          // save done
+          this.isSaving = false;
+        }, 2000);
+      } else if (step === 4) {
+        console.log('step 4!');
       }
     }
 
-    validate
-
     onAdvanceToStep(step) {
-      if(step === 2) {
-        this.step1.active = false;
-        this.step1.disabled = true;
-        this.step1.state = StepState.Complete;
-        this.step1.close();
+      // if (step === 2) {
+      //   this.step1.active = false;
+      //   this.step1.disabled = true;
+      //   this.step1.state = StepState.Complete;
+      //   this.step1.close();
 
-        this.step2.disabled = false;
-        this.step2.toggle();
-      } else if (step === 3) {
-        this.step2.active = false;
-        this.step2.disabled = true;
-        this.step2.state = StepState.Complete;
-        this.step2.close();
+      //   this.step2.disabled = false;
+      //   this.step2.toggle();
+      // } else if (step === 3) {
+      //   this.step2.active = false;
+      //   this.step2.disabled = true;
+      //   this.step2.state = StepState.Complete;
+      //   this.step2.close();
 
-        this.step3.disabled = false;
-        this.step3.toggle();
-      } else if (step === 4) {
-        this.step3.active = false;
-        this.step3.disabled = true;
-        this.step3.state = StepState.Complete;
-        this.step3.close();
+      //   this.step3.disabled = false;
+      //   this.step3.toggle();
+      // } else if (step === 4) {
+      //   this.step3.active = false;
+      //   this.step3.disabled = true;
+      //   this.step3.state = StepState.Complete;
+      //   this.step3.close();
 
-        this.step4.disabled = false;
-        this.step4.toggle();
-      }
+      //   this.step4.disabled = false;
+      //   this.step4.toggle();
+      // }
     }
 
     onSubmit() {

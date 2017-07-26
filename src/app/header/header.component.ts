@@ -1,7 +1,9 @@
-import { Component, Output, OnInit,EventEmitter } from '@angular/core';
+import { Component, Output, Input, OnInit, EventEmitter, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IUser } from '../shared/models/IUser';
-import { AuthenticationService } from '../shared/services/authentication.service';
+import { IUsersService } from '../shared/services/users.service.interface';
+import { UsersServiceToken } from '../shared/services/users.service.token';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -10,21 +12,33 @@ import { AuthenticationService } from '../shared/services/authentication.service
 })
 export class HeaderComponent implements OnInit {
 
+  environment: String;
   currentUser: IUser;
+  @Output() menuToggle = new EventEmitter();
 
-  constructor(private router: Router, 
-              private authenticationService: AuthenticationService) { }
+  constructor(private router: Router,
+              @Inject(UsersServiceToken) private usersService: IUsersService) {
+                if (!environment.production) {
+                  this.environment = environment.name;
+                }
+  }
 
   ngOnInit() {
 
-    if (this.authenticationService.getCurrentUser() != null) {
-      this.currentUser = this.authenticationService.getCurrentUser();
+    if (this.usersService.getCurrentUser() != null) {
+      this.currentUser = this.usersService.getCurrentUser();
     }
-    this.authenticationService.userChangeEvent.subscribe(user => this.onUserChanged(user));
+    this.usersService.loggedInUserChangeEvent.subscribe(user => this.onUserChanged(user));
   }
 
-  public logout(){
-    this.authenticationService.logout();
+  public toggleMenu() {
+    if (this.menuToggle !== null) {
+      this.menuToggle.emit();
+    }
+  }
+
+  public logout() {
+    this.usersService.logout();
     this.router.navigate(['/home']);
   }
 

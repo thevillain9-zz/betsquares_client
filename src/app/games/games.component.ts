@@ -1,16 +1,22 @@
-import { Input, Component, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Input, Component, OnInit, OnDestroy, SimpleChanges, Inject, ViewChild, ViewChildren,
+         ElementRef, Renderer, QueryList, ChangeDetectorRef } from '@angular/core';
+import { DataSource} from '@angular/cdk';
 import { ActivatedRoute, Router} from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+import { AnonymousSubscription } from 'rxjs/Subscription';
+import { BehaviorSubject} from 'rxjs/BehaviorSubject';
+
 import { IGame } from '../shared/models/IGame';
 import { IUser } from '../shared/models/IUser';
 import { IGridGamesByUser } from '../shared/models/igrid-game-by-user';
 import { IGridGame } from '../shared/models/igrid-game';
 import { IGameDisplayDetails} from '../shared/models/igames-display-details';
-import { Observable } from 'rxjs/Observable';
-import { AnonymousSubscription } from 'rxjs/Subscription';
-import { GridGamesService} from '../shared/services/grid-games.service';
-import { AuthenticationService} from '../shared/services/authentication.service';
-import { GamesService} from '../shared/services/games.service';
+import { IGridGamesService } from '../shared/services/grid-games.service.interface';
+import { GridGamesServiceToken } from '../shared/services/grid-games.service.token';
+import { IUsersService } from '../shared/services/users.service.interface';
+import { UsersServiceToken } from '../shared/services/users.service.token';
+import { IGamesService } from '../shared/services/games.service.interface';
+import { GamesServiceToken } from '../shared/services/games.service.token';
 
 @Component ({
     moduleId: module.id,
@@ -18,41 +24,69 @@ import { GamesService} from '../shared/services/games.service';
     templateUrl: 'games.component.html',
     styleUrls: ['games.component.css']
 })
-
 export class GamesComponent implements OnInit, OnDestroy {
+
     private scoresSubscription: AnonymousSubscription;
     private timerSubscription: AnonymousSubscription;
 
     games: IGame[];
-    filteredGames: IGame[];
+    gamesDataSource: GamesDataSource | null;
     sortBy: string = 'sku';
     gamesLabel: string;
+    isSearchActive: Boolean = false;
 
     _searchInputTerm: string = '';
     gamesDetail: IGameDisplayDetails;
     isLoadingGames: Boolean = false;
+    loadingLabel: string = 'Loading...';
     isSearchEnabled: Boolean = false;
     private _selectedSchedule: number;
+
+    displayedColumns = ['homeTeam', 'awayTeam', 'gameDate', 'join'];
+
+    private searchInput: ElementRef;
+    @ViewChildren('searchBox') set searchBox(content: QueryList<ElementRef>) {
+      if (content !== undefined && content.length > 0 && this.searchInput !== null) {
+        this.searchInput = content.first;
+        this.subscribeFilterGames();
+        this.focusSearchBox();
+      }
+    }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private gamesDataService: GamesService,
-    private gridGamesDataService: GridGamesService,
-    private authenticationService: AuthenticationService) { 
-    }
+    private renderer: Renderer,
+    private cdr: ChangeDetectorRef,
+    @Inject(GamesServiceToken) private gamesDataService: IGamesService,
+    @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
+    @Inject(UsersServiceToken) private usersService: IUsersService) {
+  }
 
   ngOnInit() {
     this.gamesLabel = 'Games';
 
     this.loadGameDetails();
-    //this.subscribeToScores();
   }
+
 
   ngOnDestroy(): void {
         if (this.timerSubscription) {
             this.timerSubscription.unsubscribe();
         }
+  }
+
+  private subscribeFilterGames(): void {
+    if (this.searchInput !== undefined) {
+      // searches the items
+      Observable.fromEvent(this.searchInput.nativeElement, 'keyup')
+        .debounceTime(200)
+        .distinctUntilChanged()
+        .subscribe(() => {
+          if (!this.gamesDataSource) { return; }
+          this.gamesDataSource.filter = this.searchInput.nativeElement.value;
+        });
+    }
   }
 
   //#region Property Get/Set
@@ -64,71 +98,15 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   get selectedSchedule(): number { return this._selectedSchedule; }
 
-  @Input()
-  set searchInputTerm(searchText: string) {
-    this._searchInputTerm = searchText;
-    this.onSearchInputChanged();
-  }
-
-  get searchInputTerm(): string {
-    return this._searchInputTerm;
-  }
-
-  //#endregion
-
-  private onSearchInputChanged(): void {
-    if (this.searchInputTerm === undefined || this.searchInputTerm === null || this.searchInputTerm.length === 0) {
-      this.filteredGames = this.games;
-    } else {
-      const searchTerm = this.searchInputTerm;
-      this.filteredGames = this.games.filter(game =>
-            game.homeTeam.shortName.search(new RegExp(searchTerm, 'i')) >= 0 ||
-            game.homeTeam.teamName.search(new RegExp(searchTerm, 'i')) >= 0 ||
-            game.homeTeam.location.search(new RegExp(searchTerm, 'i')) >= 0 ||
-            game.awayTeam.shortName.search(new RegExp(searchTerm, 'i')) >= 0 ||
-            game.awayTeam.teamName.search(new RegExp(searchTerm, 'i')) >= 0 ||
-            game.awayTeam.location.search(new RegExp(searchTerm, 'i')) >= 0
-          );
-          console.log(this.filteredGames.length);
-    }
-  }
-
   private async loadGameDetails(): Promise<void> {
     this.isLoadingGames = true;
-    this.gamesDetail = <IGameDisplayDetails>{
-                    currentPeriod: 8,
-                    maxPeriod: 23,
-                    minPeriod: 1,
-                    displayPeriods: [
-                        {period: 1, displayPeriod: 'Preseason Week 1'},
-                        {period: 2, displayPeriod: 'Preseason Week 2'},
-                        {period: 3, displayPeriod: 'Preseason Week 3'},
-                        {period: 4,  displayPeriod: 'Preseason Week 4'},
-                        {period: 5,  displayPeriod: 'Week 1'},
-                        {period: 6,  displayPeriod: 'Week 2'},
-                        {period: 7,  displayPeriod: 'Week 3'},
-                        {period: 8,  displayPeriod: 'Week 4'},
-                        {period: 9,  displayPeriod: 'Week 5'},
-                        {period: 10,  displayPeriod: 'Week 6'},
-                        {period: 11,  displayPeriod: 'Week 7'},
-                        {period: 12,  displayPeriod: 'Week 8'},
-                        {period: 13,  displayPeriod: 'Week 9'},
-                        {period: 14,  displayPeriod: 'Week 10'},
-                        {period: 16,  displayPeriod: 'Week 11'},
-                        {period: 17,  displayPeriod: 'Week 12'},
-                        {period: 20,  displayPeriod: 'Week 13'},
-                        {period: 21,  displayPeriod: 'Week 14'},
-                        {period: 22,  displayPeriod: 'Week 15'},
-                        {period: 23,  displayPeriod: 'Week 16'},
-                        {period: 24,  displayPeriod: 'Wildcard'},
-                        {period: 25,  displayPeriod: 'Divisional Round'},
-                        {period: 26,  displayPeriod: 'Conference Championships'},
-                        {period: 27,  displayPeriod: 'Pro Bowl'},
-                        {period: 28,  displayPeriod: 'Super Bowl'},
-                    ]
-      };
+    this.gamesDataService.getGamesDisplayDetails().subscribe((data) => {
+      this.gamesDetail = data;
       this.selectedSchedule = this.gamesDetail.currentPeriod;
       this.applyCurrentPeriod();
+    }, (error) => {
+      console.log('loadGameDetails Error=' + error);
+    });
 
     // this.gamesDataService.getGamesDisplayDetails().subscribe((data) => {
     //       this.gamesDetail = data;
@@ -147,12 +125,35 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.applyCurrentPeriod();
   }
 
-  public onSelectedScheduleChanged() : void {
+  public onSelectedScheduleChanged(): void {
+    const period = this.gamesDetail.displayPeriods.filter(x => x.period === this._selectedSchedule);
+    this.loadingLabel = period !== null && period.length > 0 ? 'Loading ' + period[0].displayPeriod + ' Games...' : 'Loading...';
     this.isLoadingGames = true;
     this.applyCurrentPeriod();
   }
 
-  private applyCurrentPeriod() : void {
+  public toggleSearch() {
+    this.isSearchActive = !this.isSearchActive;
+    this.cdr.detectChanges();
+    this.focusSearchBox();
+  }
+
+  private focusSearchBox() {
+    if (this.isSearchActive && this.searchInput !== null  &&
+        this.searchInput !== undefined  &&
+        this.searchInput.nativeElement !== undefined &&
+        this.searchInput.nativeElement !== null) {
+      this.renderer.invokeElementMethod(this.searchInput.nativeElement, 'focus');
+    }
+  }
+
+  public onSearchKeyDown(key: KeyboardEvent) {
+    if (key != null && key.code === 'Escape') {
+      this.toggleSearch();
+    }
+  }
+
+  private applyCurrentPeriod(): void {
     if (this.gamesDetail === undefined) {
       return;
     }
@@ -161,17 +162,16 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.loadGamesByPeriod();
   }
 
-  private loadGamesByPeriod() : void {
+  private loadGamesByPeriod(): void {
     // load games
     this.gamesDataService.getGames(this.gamesDetail.currentPeriod).subscribe(games2 => {
       setTimeout(() => {
           this.games = games2;
-          console.log(this.games[0].gameDate);
-          this.filteredGames = this.games;
+          this.gamesDataSource = new GamesDataSource(this.games);
           this.isLoadingGames = false;
         }, 3000);
     }, error => {
-      this.filteredGames = [];
+      this.games = [];
       this.isLoadingGames = false;
       // TODO: Handle error
       console.log('games received: ' + error);
@@ -185,7 +185,6 @@ export class GamesComponent implements OnInit, OnDestroy {
 
 
   // refreshScores() {
-      
   //     if(this.myGridGames != null && this.myGridGames.length > 0) {
 
   //       let gameIds = [];
@@ -201,10 +200,8 @@ export class GamesComponent implements OnInit, OnDestroy {
   //               else {
   //                 game.game.score.homeTeamScore = Math.round(Math.random() * 100);
   //               }
-                
   //             });
   //     }
-      
 
   //     this.subscribeToScores();
   // }
@@ -230,4 +227,35 @@ export class GamesComponent implements OnInit, OnDestroy {
   //   this.timerSubscription = Observable.timer(30000).first().subscribe(() => this.refreshScores());
   // }
 
+}
+
+
+export class GamesDataSource extends DataSource<any> {
+  _filterChange = new BehaviorSubject('');
+  get filter(): string { return this._filterChange.value; }
+  set filter(filter: string) { this._filterChange.next(filter); }
+
+  constructor(private _games: IGame[]) {
+    super();
+  }
+
+  /** Connect function called by the table to retrieve one stream containing the data to render. */
+  connect(): Observable<IGame[]> {
+    const displayDataChanges = [
+      this._filterChange
+    ];
+
+    return Observable.merge(...displayDataChanges).map(() => {
+      return this._games.slice().filter((game: IGame) =>
+            game.homeTeam.shortName.search(new RegExp(this.filter, 'i')) >= 0 ||
+            game.homeTeam.teamName.search(new RegExp(this.filter, 'i')) >= 0 ||
+            game.homeTeam.location.search(new RegExp(this.filter, 'i')) >= 0 ||
+            game.awayTeam.shortName.search(new RegExp(this.filter, 'i')) >= 0 ||
+            game.awayTeam.teamName.search(new RegExp(this.filter, 'i')) >= 0 ||
+            game.awayTeam.location.search(new RegExp(this.filter, 'i')) >= 0
+          );
+      });
+  }
+
+  disconnect() {}
 }

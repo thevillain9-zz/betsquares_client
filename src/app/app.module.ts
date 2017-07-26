@@ -1,11 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpModule, Http } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { MaterialModule} from '@angular/material';
-//import { FlexLayoutModule } from '@angular/flex-layout';
-import { CovalentCoreModule,CovalentLayoutModule, CovalentSearchModule } from '@covalent/core';
+import { CdkTableModule } from '@angular/cdk';
+import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { appRoutes } from './routes';
 
@@ -18,22 +19,27 @@ import { HomeComponent } from './home/home.component';
 import { JoinGridComponent } from './join-grid/join-grid.component';
 import { LoginComponent } from './login/login.component';
 import { ScoreComponent } from './score/score.component';
-import { AuthenticationService } from './shared/services/authentication.service';
+
+
+import { GridGamesServiceFactory } from './shared/services/grid-games.service.factory';
 import { GridGamesService } from './shared/services/grid-games.service';
+import { GridGamesServiceToken } from './shared/services/grid-games.service.token';
+import { GamesServiceFactory } from './shared/services/games.service.factory';
 import { GamesService } from './shared/services/games.service';
-import { UsersService } from './shared/services/users.service';
+import { GamesServiceToken } from './shared/services/games.service.token';
+import { IUsersService } from './shared/services/users.service.interface';
+import { UsersServiceToken } from './shared/services/users.service.token';
+import { UsersServiceFactory } from './shared/services/users.service.factory';
+
 import { NotFoundComponent } from './not-found/not-found.component';
 import { RegisterComponent } from './register/register.component';
 import { SideNavComponent } from './side-nav/side-nav.component';
 import { MyGamesComponent } from './my-games/my-games.component';
 
 import {environment} from '../environments/environment';
-
-// import { fakeBackendProvider } from './_helpers/fake-backend';
-// import { MockBackend, MockConnection } from '@angular/http/testing';
-// import { BaseRequestOptions } from '@angular/http';
-
-
+import { FooterComponent } from './footer/footer.component';
+import { GridGameComponent } from './grid-game/grid-game.component';
+import { RulesComponent } from './rules/rules.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +56,9 @@ import {environment} from '../environments/environment';
     RegisterComponent,
     SideNavComponent,
     MyGamesComponent,
+    FooterComponent,
+    GridGameComponent,
+    RulesComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,21 +66,28 @@ import {environment} from '../environments/environment';
     ReactiveFormsModule,
     HttpModule,
     MaterialModule,
-    CovalentCoreModule,
-    CovalentLayoutModule,CovalentSearchModule,
-    //FlexLayoutModule,
+    FlexLayoutModule.forRoot(),
     BrowserAnimationsModule,
+    CdkTableModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [AuthenticationService, GridGamesService, GamesService, UsersService, 
-    // fakeBackendProvider,
-    // MockBackend,
-    // BaseRequestOptions
-  ],
+  providers: [
+    {
+      provide: UsersServiceToken,
+      useFactory: UsersServiceFactory,
+      deps: [Http]
+    },
+    {
+      provide: GridGamesServiceToken,
+      useFactory: GridGamesServiceFactory,
+      deps: [Http]
+    },
+    {
+      provide: GamesServiceToken,
+      useFactory: GamesServiceFactory,
+      deps: [Http]
+    }],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
- 
-// TODO:
-// use loading of providers dynamically
-// http://stackoverflow.com/questions/39942118/how-to-inject-different-service-based-on-certain-build-environment-in-angular2/39942256#39942256
+export class AppModule {
+}

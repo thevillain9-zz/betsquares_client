@@ -1,46 +1,59 @@
-<md-card>
-  <div layout="row" layout-align="start center" class="pad-left-sm pad-right-sm">
-    <span *ngIf="!searchBox?.searchVisible" class="push-left-sm">
-      <span class="md-title">Games</span>
+<my-games></my-games>
+
+<md-card>      
+  <div fxlayout="row"  fxLayoutAlign="start center"> 
+    <span *ngIf="!isSearchActive">
+      <h2>Games</h2>
     </span>
-    <td-search-box #searchBox backIcon="arrow_back" class="push-right-sm" placeholder="Search" flex
-      (searchDebounce)="searchInputTerm = $event" 
-      (search) ="searchInputTerm = $event"
-      (clear)="searchInputTerm = ''"
-       autocomplete="off"
-      >
-    </td-search-box>
-    <div *ngIf="gamesDetail">
+    <button md-icon-button (click)="toggleSearch()" *ngIf="!isLoadingGames">
+      <md-icon>search</md-icon>
+    </button>
+    <md-input-container *ngIf="isSearchActive" fxFlex="grow" floatPlaceholder="never" class="search-game-box">
+      <input  mdInput #searchBox autocomplete="off" placeholder="Search games" (blur)="toggleSearch()" (keydown)="onSearchKeyDown($event)">
+    </md-input-container>
+    <div *ngIf="gamesDetail" fxFlex fxLayoutAlign="end center">
       <md-select placeholder="Week" floatPlaceholder="never" [(ngModel)]="selectedSchedule" class="scheduleInput">
         <md-option *ngFor="let schedule of gamesDetail.displayPeriods" [value]="schedule.period">{{ schedule.displayPeriod }}</md-option>
       </md-select>
     </div>
   </div>
-  <md-divider *ngIf="isLoadingGames || filteredGames?.length === 0"></md-divider>
-  <div *ngIf="!isLoadingGames && filteredGames?.length === 0" layout="row" layout-align="center center">
-      <h3>No games found.</h3>
-  </div>
-  <div *ngIf="isLoadingGames" layout="column" layout-align="center center">
-      <h3>Loading</h3>
-      <div class="loadingProgress">
-        <md-progress-bar mode="indeterminate"></md-progress-bar>
-      </div>
-      
-  </div>  
-  
-  <table td-data-table *ngIf="!isLoadingGames && filteredGames?.length > 0">
-      <th td-data-table-column>Home</th>
-      <th td-data-table-column>Away</th>
-      <th td-data-table-column>Time {{currentTimeZone()}}</th>
-      <th td-data-table-column>Join</th>
-        <tr td-data-table-row class="game-row" *ngFor="let game of filteredGames">
-          <td td-data-table-cell><img [src]="game.homeTeam.logoUri" /> {{game.homeTeam.location}}</td>
-          <td td-data-table-cell><img [src]="game.awayTeam.logoUri"  /> {{game.awayTeam.location}}</td>
-          <td td-data-table-cell>{{game.gameDate | date :'shortDate'}} <br/>{{game.gameDate | date :'shortTime'}}</td>
-          <td td-data-table-cell>
-            <a md-icon-button [routerLink]="['/join/',game.gameId]"><md-icon>grid_on</md-icon></a>
-          </td>
-        </tr>
-  </table>
-  <p>&nbsp;</p>
+  <md-card-content>
+    <md-divider *ngIf="isLoadingGames || filteredGames?.length === 0"></md-divider>
+    <div *ngIf="!isLoadingGames && filteredGames?.length === 0" fxLayout="row" fxLayoutAlign="center center">
+        <h3>No games found.</h3>
+    </div>
+    <div *ngIf="isLoadingGames" fxLayout="column" fxLayoutAlign="center center">
+        <h3>{{loadingLabel}}</h3>
+        <div class="loadingProgress">
+          <md-progress-bar mode="indeterminate"></md-progress-bar>
+        </div>
+    </div>  
+    <div>
+      <md-table [dataSource]="gamesDataSource" *ngIf="!isLoadingGames && games?.length > 0">
+        <ng-container cdkColumnDef="homeTeam">
+          <md-header-cell *cdkHeaderCellDef>Home</md-header-cell>
+          <md-cell *cdkCellDef="let game">
+              <div fxLayout="column" fxLayoutAlign="start start"><img [src]="game.homeTeam.logoUri"/>
+                <span style="text-align: center">{{game.homeTeam.location}}</span></div>
+            </md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="awayTeam">
+          <md-header-cell *cdkHeaderCellDef>Away</md-header-cell>
+          <md-cell *cdkCellDef="let game"> 
+            <div fxLayout="column" fxLayoutAlign="start start"><img [src]="game.awayTeam.logoUri" />
+            <span style="text-align: center">{{game.awayTeam.location}}</span></div></md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="gameDate">
+          <md-header-cell *cdkHeaderCellDef>Time {{currentTimeZone()}}</md-header-cell>
+          <md-cell *cdkCellDef="let game"><a class="gameLink" [routerLink]="['/games/',game.gameId]">{{game.gameDate | date :'shortDate'}} <br/>{{game.gameDate | date :'shortTime'}}</a></md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="join">
+          <md-header-cell *cdkHeaderCellDef>Join</md-header-cell>
+          <md-cell *cdkCellDef="let game"><a md-icon-button [routerLink]="['/join/game/',game.gameId]"><md-icon>grid_on</md-icon></a></md-cell>
+        </ng-container>
+        <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+        <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+      </md-table>
+    </div>
+  </md-card-content>
 </md-card>

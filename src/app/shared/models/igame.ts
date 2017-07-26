@@ -3,10 +3,11 @@ import { IScore } from './IScore';
 
 export interface IGame {
     gameId: number;
-    homeTeam:ITeam;
-    awayTeam:ITeam;
-    gameDate:string;
-    isActive:boolean;
+    homeTeam: ITeam;
+    awayTeam: ITeam;
+    gameDate: string;
+    isActive: boolean;
+    isFinished: boolean;
     score: IScore;
     gamePeriod: number;
 }

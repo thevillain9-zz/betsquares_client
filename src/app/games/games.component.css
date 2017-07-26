@@ -4,3 +4,13 @@
 .loadingProgress {
     width: 75%;
 }
+
+.mat-row {
+    height: 65px;
+}
+
+
+.gameLink {
+    color: #FFFFFF;
+    text-decoration: none;
+}

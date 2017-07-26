@@ -17,7 +17,7 @@ export class SideNavComponent implements OnInit {
   }
 
   public routeAndClose(route: string): void {
-    if(this.onCloseSideNav != null) {
+    if (this.onCloseSideNav != null) {
         this.onCloseSideNav.emit([]);
     }
     this.router.navigate([route]);

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Router} from '@angular/router';
-import { UsersService } from '../shared/services/users.service'
-import { AuthenticationService } from '../shared/services/authentication.service'
+import { IUsersService } from '../shared/services/users.service.interface';
+import { UsersServiceToken } from '../shared/services/users.service.token';
 import { IGame } from '../shared/models/IGame';
 import { IUser } from '../shared/models/IUser';
 
@@ -18,21 +18,17 @@ export class AboutComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router,
-        private userService: UsersService,
-        private authenticationService: AuthenticationService) { 
-
-        
+        @Inject(UsersServiceToken) private usersService: IUsersService) { 
      }
 
   ngOnInit() {
-    if(this.authenticationService.getCurrentUser() != null) {
-        this.currentUser = this.authenticationService.getCurrentUser();
+    if(this.usersService.getCurrentUser() != null) {
+        this.currentUser = this.usersService.getCurrentUser();
     }
 
-    this.userService.getAll().subscribe(users => { 
-        this.users = users; 
-    });
-    
+    // this.usersService.getAllUsers().subscribe(users => { 
+    //     this.users = users; 
+    // });
   }
 
 }

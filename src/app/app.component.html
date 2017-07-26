@@ -1,4 +1,4 @@
-<td-layout #layout>
+<!--<td-layout #layout>
   <td-navigation-drawer sidenavTitle="BetSquare"   navigationRoute="/">
   </td-navigation-drawer>
   <div td-sidenav-content>
@@ -8,7 +8,7 @@
     <div td-toolbar-content layout="row" layout-align="center center" flex>
       <span flex></span><app-header ></app-header>
     </div>
-    <router-outlet></router-outlet>
+    
     <td-layout-footer>
       <div layout="row" layout-align="start center">
         <span class="md-caption">Copyright &copy; 2017 - 2018 BetSquares. All rights reserved</span>
@@ -17,7 +17,25 @@
       </div>
     </td-layout-footer>
   </td-layout-nav>
-</td-layout>
+</td-layout>-->
+<md-sidenav-container>
+  <md-sidenav #sideNav class="app-sidenav" >
+    <!-- sidenav content -->
+    <app-side-nav color="primary" (onCloseSideNav)="sideNav.close()" color="accent"></app-side-nav>
+  </md-sidenav>
+
+  <div class="container" fxLayout="column" fxFill>
+    <app-header (menuToggle)="sideNav.toggle()"></app-header>
+
+    <div class="app-content" fxFlex>
+      <!-- primary content -->
+      <router-outlet></router-outlet>
+    </div>
+    
+    <app-footer class="app-footer"></app-footer>
+  </div>
+  
+</md-sidenav-container>
 <span class="app-action">
   <button md-fab [routerLink]="['/games']" mdTooltip="Start a new game" mdTooltipPosition="above"><md-icon>grid_on</md-icon></button>
 </span>

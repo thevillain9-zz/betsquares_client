@@ -1,9 +1,15 @@
-.app-content {
-  padding: 20px;
-}
+
 .app-sidenav {
   padding: 10px;
   min-width: 200px;
+}
+
+.app-content {
+  padding: 20px;
+}
+
+.app-content md-card {
+  margin: 20px;
 }
 
 .app-action {
@@ -11,4 +17,16 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
+}
+
+.app-header {
+
+}
+
+.container {
+  min-height: 100%;
+}
+
+.app-footer {
+  height: 142px; /* .push must be the same height as .footer */
 }

@@ -8,6 +8,11 @@ import { IUser } from '../models/IUser';
 @Injectable() 
 export class ServiceBase
 {
+
+    constructor(protected baseUrl: String) {
+
+    }
+
     getAuthorizationHeaders() {
         // create authorization header with jwt token
         let currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -31,6 +36,7 @@ export class ServiceBase
     }
 
     extractData(res: Response) {
+        console.log(res);
         let body = res.json();
         return body || { };
     }

@@ -1,11 +1,11 @@
 import { Component, OnInit, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+
 @Component({
   selector: 'app-score',
   templateUrl: './score.component.html',
   styleUrls: ['./score.component.css']
 })
 export class ScoreComponent implements OnInit, OnChanges {
-    
     readonly scoreBgUpdate: Number;
     isHomeTeamScoreUpdated: Boolean;
     isAwayTeamScoreUpdated: Boolean;
@@ -22,8 +22,8 @@ export class ScoreComponent implements OnInit, OnChanges {
     ngOnInit() { }
 
     ngOnChanges(changes: SimpleChanges) {
-        for(let propName in changes) {
-            if(propName === "homeTeamScore"
+        for (let propName in changes) {
+            if (propName === "homeTeamScore"
                 && !changes[propName].firstChange
                 && changes[propName].previousValue != changes[propName].currentValue) {
                 this.isHomeTeamScoreUpdated = true;
@@ -44,6 +44,5 @@ export class ScoreComponent implements OnInit, OnChanges {
         }
     }
 
-    
 }
 

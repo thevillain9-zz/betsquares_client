@@ -1,68 +1,61 @@
-
-<!--<div *ngIf="game && !game.isActive" class="card">-->
-<div *ngIf="game && !game.isActive" class="card">
-    <div class="row">
-        <h2> Join a game</h2>
-    </div>
-    <div class="row">
-        <h2>Create a grid game</h2>
-    </div>
-    <div class="row">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th></th>
-                </tr>
-                <tr *ngFor="let gridgame of gridgames">
-                    <td></td>
-                </tr>
-            </thead>
-        </table>
-    </div>
-</div>
-
-<div *ngIf="game && game.isActive" class="card">
-        <div class="row">            
-            <div class="col-xs-3" style="text-align: center">
-                    <img [src]="game.homeTeam.logoUri" />
-                    <h3>{{game.homeTeam.location}}</h3>
+<md-card *ngIf="game">
+    <div class="container">
+        <div fxLayout="row" fxFlex fxLayoutAlign="center center">
+            <div fxFlex="33%"  fxLayoutAlign="end center">
+                 <img [src]="game.homeTeam.logoUri" />
+                 {{game.homeTeam.location}}
             </div>
-            <div class="col-xs-1">   
-                <h1>{{game.score.homeTeamScore}}</h1>                 
+            <div fxFlex="12%"  fxLayoutAlign="end center">
+                <div fxLayout="column" fxLayoutAlign="start end">
+                    <h3 *ngIf="game.isActive || game.isFinished">{{game.score.homeTeamScore}}</h3>
+                </div>
             </div>
-            <div class="col-xs-3">   
-                <p class="time">{{game.gameDate | date :'shortDate'}} <BR/> {{game.gameDate | date :'shortTime'}}</p>
+            <div fxFlex="10%"  fxLayoutAlign="center start">
+                <div fxLayout="column" fxLayoutAlign="center center">
+                    vs
+                </div>
             </div>
-            <div class="col-xs-1">
-                <h1>{{game.score.awayTeamScore}}</h1>
+            <div fxFlex="12%"  fxLayoutAlign="start center">
+                <div fxLayout="column">
+                    <h3 *ngIf="game.isActive || game.isFinished">{{game.score.awayTeamScore}}</h3>
+                </div>
             </div>
-            <div class="col-xs-3" style="text-align: center">
-                <img [src]="game.awayTeam.logoUri" /> 
-                <h3>{{game.awayTeam.location}}</h3>
-            </div> 
+            <div fxFlex="33%"  fxLayoutAlign="start center">
+                {{game.awayTeam.location}}
+                <img [src]="game.awayTeam.logoUri" />
+            </div>
         </div>
-        <div class="row">
-            <div class="col-xs-3 invisible"></div>
-            <div class="col-xs-4">
-                <table class="table">
-                    <thead><tr>
-                        <th></th>
-                        <th *ngFor="let period of game.score.periodNames">{{period}}</th>
-                    </tr></thead>
-                    <tbody>
-                        <tr>
-                            <td>{{game.homeTeam.shortName}}</td>
-                            <td *ngFor="let score of game.score.homeTeamTotalScores; let i = index;">
-                                {{ score }} (+{{ game.score.homeTeamPeriodScores[i] }})</td>
-                        </tr>
-                        <tr>
-                            <td>{{game.awayTeam.shortName}}</td>
-                            <td *ngFor="let score of game.score.awayTeamTotalScores; let i = index;">
-                                {{ score }} (+{{ game.score.awayTeamPeriodScores[i] }})</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-               
-        </div>
-</div>
+    </div>
+   <md-card-content>
+       <div fxLayout="row" fxFill fxLayoutAlign="center center">
+            <p style="text-align: center" *ngIf="!game.isActive && !game.isFinished">
+                {{game.gameDate | date :'shortDate'}} <BR/> {{game.gameDate | date :'shortTime'}}
+            </p>
+            <table class="mat-table score-table" *ngIf="game.isActive || game.isFinished">
+                <thead><tr class="mat-header-row">
+                    <th>
+                        <div class="periodTime">
+                            <span *ngIf="game.isActive">{{game.score.currentTime}}</span>
+                            <span *ngIf="game.isFinished">Final</span>
+                        </div>
+                    </th>
+                    <th class="mat-header-cell mat-cell" *ngFor="let period of game.score.periodNames">{{period}}</th>
+                </tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="mat-cell">{{game.homeTeam.shortName}}</td>
+                        <td *ngFor="let score of game.score.homeTeamTotalScores; let i = index;">{{ score }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{game.awayTeam.shortName}}</td>
+                        <td *ngFor="let score of game.score.awayTeamTotalScores; let i = index;">{{ score }}</td>
+                    </tr>
+                </tbody>
+            </table>
+       </div>
+    
+  </md-card-content> 
+  <md-card-actions *ngIf="!game.isActive && !game.isFinished">
+      <button md-raised-button color="accent" [routerLink]="['/join/game/', game.gameId]">Start Grid Game</button>
+  </md-card-actions>
+</md-card>

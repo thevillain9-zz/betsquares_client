@@ -1,52 +1,50 @@
-<div>
-    <!--<a md-raised-button color="primary" [routerLink]="['/games']">Games</a>-->
-    <button md-icon-button [mdMenuTriggerFor]="notificationsMenu">
-      <!--<td-notification-count color="accent" [notifications]="3">-->
-        <md-icon>notifications</md-icon>
-      <!--</td-notification-count>-->
-    </button>
-    <md-menu #notificationsMenu="mdMenu" yPosition="below" [overlapTrigger]="false">
-      <td-menu>
-        <div td-menu-header class="md-subhead">Updates</div>
-        <md-nav-list dense>          
-          <a md-list-item href="https://github.com/Teradata/covalent/pulls?q=is%3Apr+is%3Aclosed+milestone%3A%22Beta+3%22+label%3Abug" target="_blank">
-            <md-icon md-list-avatar>bug_report</md-icon>
-            <h4 md-line><span class="text-wrap">Beta 3 bugfixes</span></h4>
-            <p md-line>Stabililty</p>
-          </a>
-          <md-divider></md-divider>
-          <a md-list-item href="https://github.com/Teradata/covalent/blob/develop/package.json#L57-L68" target="_blank">
-            <md-icon md-list-avatar>change_history</md-icon>
-            <h4 md-line><span class="text-wrap">Angular v4 and material@beta.3 support</span></h4>
-            <p md-line>Dependencies updated</p>
-          </a>
-        </md-nav-list>
-        <a md-button color="accent" td-menu-footer href="https://github.com/Teradata/covalent/blob/develop/docs/CHANGELOG.md" target="_blank">
-          View Full Changelog
-        </a>
-      </td-menu>
-    </md-menu>
-    <md-menu #accountMenu="mdMenu" yPosition="below" [overlapTrigger]="false">
-        <md-card>
-             <md-card-header>
-                <div md-card-avatar class="example-header-image"></div>
-                <md-card-title><span *ngIf="currentUser">{{currentUser.firstName}} {{currentUser.lastName}}</span></md-card-title>
-            </md-card-header>
-            <md-icon>account_circle</md-icon>
-            <md-card-content>
+<md-toolbar color="primary">
+        <button md-icon-button  (click)="toggleMenu()">
+            <md-icon>menu</md-icon>
+        </button>
+        <h2>Bet Squares</h2>
+        
+        <span class="example-spacer"></span>
 
-            </md-card-content>
+        <button md-icon-button [mdMenuTriggerFor]="notificationsMenu">
+            <md-icon>notifications</md-icon>
+        </button>
+        <md-menu #notificationsMenu="mdMenu" yPosition="below" [overlapTrigger]="false">
+        
+            <md-nav-list dense>          
+            <a md-list-item href="https://github.com/Teradata/covalent/pulls?q=is%3Apr+is%3Aclosed+milestone%3A%22Beta+3%22+label%3Abug" target="_blank">
+                <md-icon md-list-avatar>bug_report</md-icon>
+                <h4 md-line><span class="text-wrap">Beta 3 bugfixes</span></h4>
+                <p md-line>Stabililty</p>
+            </a>
             <md-divider></md-divider>
-            <md-card-actions>
-                <button md-button (click)="logout()">Sign out</button>
-            </md-card-actions>
-        </md-card>
-    </md-menu>
-    <button *ngIf="currentUser" mdTooltip="Profile" md-icon-button [mdMenuTriggerFor]="accountMenu">
-      <md-icon>account_circle</md-icon>
-    </button>
+            <a md-list-item href="https://github.com/Teradata/covalent/blob/develop/package.json#L57-L68" target="_blank">
+                <md-icon md-list-avatar>change_history</md-icon>
+                <h4 md-line><span class="text-wrap">Angular v4 and material@beta.3 support</span></h4>
+                <p md-line>Dependencies updated</p>
+            </a>
+            </md-nav-list>
+        </md-menu>
+        <md-menu #accountMenu="mdMenu" yPosition="below" [overlapTrigger]="false">
+            <md-card>
+                <md-card-header>
+                    <div md-card-avatar class="example-header-image"></div>
+                    <md-card-title><span *ngIf="currentUser">{{currentUser.firstName}} {{currentUser.lastName}}</span></md-card-title>
+                </md-card-header>
+                <md-icon>account_circle</md-icon>
+                <md-card-content>
 
-    <a *ngIf="currentUser === null || currentUser === undefined" mdToolTip="Sign In" md-raised-button color="primary" [routerLink]="['/login']">Sign In</a>
-</div>
-    
-    
+                </md-card-content>
+                <md-divider></md-divider>
+                <md-card-actions>
+                    <button md-button (click)="logout()">Sign out</button>
+                </md-card-actions>
+            </md-card>
+        </md-menu>
+        <button *ngIf="currentUser" mdTooltip="Profile" md-icon-button [mdMenuTriggerFor]="accountMenu">
+        <md-icon>account_circle</md-icon>
+        </button>
+
+        <a *ngIf="currentUser === null || currentUser === undefined" mdToolTip="Sign In" md-raised-button color="primary" [routerLink]="['/login']">Sign In</a>
+        <span>[{{environment}}]</span>
+</md-toolbar>

@@ -5,9 +5,12 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { LoginComponent } from './login/login.component';
+import { RulesComponent } from './rules/rules.component';
+import { GridGameComponent } from './grid-game/grid-game.component';
 import { JoinGridComponent } from './join-grid/join-grid.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { RegisterComponent } from './register/register.component';
+import { GameComponent } from './game/game.component';
 import { GamesComponent } from './games/games.component';
 
 export const appRoutes: Routes = [
@@ -15,8 +18,12 @@ export const appRoutes: Routes = [
     { path: '', component: HomeComponent},
     { path: 'home', component: HomeComponent},
     { path: 'games', component: GamesComponent},
-    // { path: 'games/:gameid', component: GamesComponent},
-    { path: 'join/:gameid', component: JoinGridComponent},
+    { path: 'games/:gameid', component: GameComponent},
+    { path: 'gridgame/:gridgameid', component: GridGameComponent},
+    { path: 'join/game/:gameid', component: JoinGridComponent},
+    { path: 'join/gridIronGame/:gridgameid', component: JoinGridComponent},
+    { path: 'join', component: JoinGridComponent},
+    { path: 'rules', component: JoinGridComponent},
     { path: 'login', component: LoginComponent},
     { path: 'register', component: RegisterComponent},
     { path: 'about', component: AboutComponent},

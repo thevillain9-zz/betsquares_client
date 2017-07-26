@@ -20,13 +20,13 @@
       "prefix": "app",
       "styles": [
         "styles.css",
-        "betsquare.theme.scss",
-        "../node_modules/@covalent/core/common/platform.scss"
+        "betsquare.theme.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
       "environments": {
-        "dev": "environments/environment.ts",
+        "local": "environments/environment.local.ts",
+        "dev": "environments/environment.dev.ts",
         "prod": "environments/environment.prod.ts"
       }
     }

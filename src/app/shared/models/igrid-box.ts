@@ -1,8 +1,9 @@
 import { IUser } from './iuser';
 
 export interface IGridBox {
-    scoreX: Number;
-    scoreY: Number;
+    scoreX: number;
+    scoreY: number;
     userId: IUser;
+    isWinner: boolean;
 }
 

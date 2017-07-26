@@ -2,7 +2,7 @@ import { IGame } from '../../models/IGame';
 import { ITeam } from '../../models/ITeam';
 import { IScore } from '../../models/IScore';
 
-export const GAMES_MOCK_DATA : IGame[] = [
+export const GAMES_MOCK_DATA: IGame[] = [
   <IGame>{
     'gameId': 1,
     'homeTeam': <ITeam>{
@@ -22,7 +22,8 @@ export const GAMES_MOCK_DATA : IGame[] = [
       'teampageUri': 'http://www.espn.com/nfl/team/_/name/dal/dallas-cowboys',
     },
     'gameDate': '2016-10-13T13:30:00.000Z',
-    'isActive': true,
+    'isActive': false,
+    'isFinished': false,
     'gamePeriod': 8,
     'score': <IScore>{
       'gameId': 1,
@@ -35,12 +36,13 @@ export const GAMES_MOCK_DATA : IGame[] = [
         '1',
         '2',
         '3',
-        '4'
+        '4',
+        'T'
       ],
       'awayTeamTotalScores': [
         7,
         14,
-        0,
+        14,
         17
       ],
       'awayTeamPeriodScores': [
