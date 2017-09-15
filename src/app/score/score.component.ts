@@ -22,19 +22,18 @@ export class ScoreComponent implements OnInit, OnChanges {
     ngOnInit() { }
 
     ngOnChanges(changes: SimpleChanges) {
-        for (let propName in changes) {
-            if (propName === "homeTeamScore"
+        for (const propName in changes) {
+            if (propName === 'homeTeamScore'
                 && !changes[propName].firstChange
-                && changes[propName].previousValue != changes[propName].currentValue) {
+                && changes[propName].previousValue !== changes[propName].currentValue) {
                 this.isHomeTeamScoreUpdated = true;
                 this.isAwayTeamScoreUpdated = false;
                 setTimeout(() => {
                     this.isHomeTeamScoreUpdated = false;
                 }, this.scoreBgUpdate);
-            }
-            else if(propName === "awayTeamScore"
+            } else if (propName === 'awayTeamScore'
                 && !changes[propName].firstChange
-                && changes[propName].previousValue != changes[propName].currentValue) {
+                && changes[propName].previousValue !== changes[propName].currentValue) {
                 this.isAwayTeamScoreUpdated = true;
                 this.isHomeTeamScoreUpdated = false;
                 setTimeout(() => {

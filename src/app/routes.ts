@@ -12,6 +12,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { RegisterComponent } from './register/register.component';
 import { GameComponent } from './game/game.component';
 import { GamesComponent } from './games/games.component';
+import { MyGamesComponent} from './my-games/my-games.component';
+
 
 export const appRoutes: Routes = [
     // order matters
@@ -19,11 +21,12 @@ export const appRoutes: Routes = [
     { path: 'home', component: HomeComponent},
     { path: 'games', component: GamesComponent},
     { path: 'games/:gameid', component: GameComponent},
+    { path: 'mygames', component: MyGamesComponent},
     { path: 'gridgame/:gridgameid', component: GridGameComponent},
     { path: 'join/game/:gameid', component: JoinGridComponent},
     { path: 'join/gridIronGame/:gridgameid', component: JoinGridComponent},
     { path: 'join', component: JoinGridComponent},
-    { path: 'rules', component: JoinGridComponent},
+    { path: 'rules', component: RulesComponent},
     { path: 'login', component: LoginComponent},
     { path: 'register', component: RegisterComponent},
     { path: 'about', component: AboutComponent},

@@ -16,7 +16,7 @@ export interface IGamesService {
 
     getGame(gameId: number): Observable<IGame>;
 
-    getScores(games: Array<number>);
+    getScores(games: Array<number>): Observable<IScore[]>;
 
     getGamesDisplayDetails(): Observable<IGameDisplayDetails>;
 

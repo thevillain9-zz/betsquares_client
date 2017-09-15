@@ -41,6 +41,8 @@ import { FooterComponent } from './footer/footer.component';
 import { GridGameComponent } from './grid-game/grid-game.component';
 import { RulesComponent } from './rules/rules.component';
 
+import { BoxUserPipe } from './shared/pipes/box-user-pipe';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,6 +61,7 @@ import { RulesComponent } from './rules/rules.component';
     FooterComponent,
     GridGameComponent,
     RulesComponent,
+    BoxUserPipe
   ],
   imports: [
     BrowserModule,

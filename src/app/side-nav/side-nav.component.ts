@@ -1,6 +1,10 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter  } from '@angular/core';
+import { Input, Output, Component, OnInit, OnDestroy, Inject, EventEmitter} from '@angular/core';
 import { ActivatedRoute, Router} from '@angular/router';
 import {MdMenuTrigger} from '@angular/material';
+
+import { IUser } from '../shared/models/IUser';
+import { IUsersService } from '../shared/services/users.service.interface';
+import { UsersServiceToken } from '../shared/services/users.service.token';
 
 @Component({
   selector: 'app-side-nav',
@@ -10,10 +14,15 @@ import {MdMenuTrigger} from '@angular/material';
 export class SideNavComponent implements OnInit {
 
   @Output() onCloseSideNav = new EventEmitter();
+  currentUser: IUser;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,
+              @Inject(UsersServiceToken) private usersService: IUsersService) {
+    this.currentUser = usersService.getCurrentUser();
+  }
 
   ngOnInit() {
+
   }
 
   public routeAndClose(route: string): void {

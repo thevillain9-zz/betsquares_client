@@ -7,7 +7,7 @@
             </div>
             <div fxFlex="12%"  fxLayoutAlign="end center">
                 <div fxLayout="column" fxLayoutAlign="start end">
-                    <h3 *ngIf="game.isActive || game.isFinished">{{game.score.homeTeamScore}}</h3>
+                    <h3 *ngIf="game.score.state !== 0">{{game.score.homeTeamScore}}</h3>
                 </div>
             </div>
             <div fxFlex="10%"  fxLayoutAlign="center start">
@@ -17,7 +17,7 @@
             </div>
             <div fxFlex="12%"  fxLayoutAlign="start center">
                 <div fxLayout="column">
-                    <h3 *ngIf="game.isActive || game.isFinished">{{game.score.awayTeamScore}}</h3>
+                    <h3 *ngIf="game.score.state !== 0">{{game.score.awayTeamScore}}</h3>
                 </div>
             </div>
             <div fxFlex="33%"  fxLayoutAlign="start center">
@@ -28,15 +28,15 @@
     </div>
    <md-card-content>
        <div fxLayout="row" fxFill fxLayoutAlign="center center">
-            <p style="text-align: center" *ngIf="!game.isActive && !game.isFinished">
-                {{game.gameDate | date :'shortDate'}} <BR/> {{game.gameDate | date :'shortTime'}}
+            <p class="game-date-label" *ngIf="game.score.state === 0">
+                @ {{game.gameDate | date :'shortDate'}} {{game.gameDate | date :'shortTime'}}
             </p>
-            <table class="mat-table score-table" *ngIf="game.isActive || game.isFinished">
+            <table class="mat-table score-table" *ngIf="game.score.state !== 0">
                 <thead><tr class="mat-header-row">
                     <th>
                         <div class="periodTime">
-                            <span *ngIf="game.isActive">{{game.score.currentTime}}</span>
-                            <span *ngIf="game.isFinished">Final</span>
+                            <span *ngIf="game.score.state === 1">{{game.score.currentPeriod}}  {{game.score.currentTime}}</span>
+                            <span *ngIf="game.score.state === 2">Final</span>
                         </div>
                     </th>
                     <th class="mat-header-cell mat-cell" *ngFor="let period of game.score.periodNames">{{period}}</th>
@@ -44,18 +44,27 @@
                 <tbody>
                     <tr>
                         <td class="mat-cell">{{game.homeTeam.shortName}}</td>
-                        <td *ngFor="let score of game.score.homeTeamTotalScores; let i = index;">{{ score }}</td>
+                        <td *ngFor="let score of game.score.homeTeamTotalScores; let i = index;">
+                            <span *ngIf="i <= game.score.currentPeriodIndex">{{score}}</span>
+                            <span *ngIf="i > game.score.currentPeriodIndex">-</span>
+                        </td>
                     </tr>
                     <tr>
                         <td>{{game.awayTeam.shortName}}</td>
-                        <td *ngFor="let score of game.score.awayTeamTotalScores; let i = index;">{{ score }}</td>
+                        <td *ngFor="let score of game.score.awayTeamTotalScores; let i = index;">
+                            <span *ngIf="i <= game.score.currentPeriodIndex">{{score}}</span>
+                            <span *ngIf="i > game.score.currentPeriodIndex">-</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
        </div>
     
   </md-card-content> 
-  <md-card-actions *ngIf="!game.isActive && !game.isFinished">
+  <md-card-actions *ngIf="game.score.state === 0">
       <button md-raised-button color="accent" [routerLink]="['/join/game/', game.gameId]">Start Grid Game</button>
   </md-card-actions>
+  <md-card-footer>
+      <span class="last-update-label">Last Update: </span><span class="last-update-time">{{game.score.lastUpdate | date :'mediumTime'}}</span>
+  </md-card-footer>
 </md-card>

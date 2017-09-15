@@ -1,5 +1,5 @@
 import { Input, Component, OnInit, OnDestroy, SimpleChanges, Inject, ViewChild, ViewChildren,
-         ElementRef, Renderer, QueryList } from '@angular/core';
+         ElementRef, Renderer, QueryList, Output, EventEmitter } from '@angular/core';
 import { DataSource} from '@angular/cdk';
 import { ActivatedRoute, Router, Params} from '@angular/router';
 import { Observable } from 'rxjs/Observable';
@@ -23,46 +23,85 @@ import { GamesServiceToken } from '../shared/services/games.service.token';
     templateUrl: 'game.component.html',
     styleUrls: ['game.component.scss']
 })
-export class GameComponent implements OnInit {
-    @Input() game: IGame;
+export class GameComponent implements OnInit, OnDestroy {
 
-    constructor(
-        private route: ActivatedRoute,
-        private router: Router,
-        @Inject(GamesServiceToken) private gamesDataService: IGamesService,
-        @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
-        @Inject(UsersServiceToken) private usersService: IUsersService) {
+  @Output() onScoreChanged = new EventEmitter();
+  @Input() game: IGame;
+  private timerSubscription: AnonymousSubscription;
+  private scoreSubscription: AnonymousSubscription;
+
+  constructor(
+      private route: ActivatedRoute,
+      private router: Router,
+      @Inject(GamesServiceToken) private gamesDataService: IGamesService,
+      @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
+      @Inject(UsersServiceToken) private usersService: IUsersService) {
+  }
+
+  ngOnInit() {
+
+    if (this.game === null || this.game === undefined) {
+        console.log('load game');
+        // validate parameters
+        this.route.params.subscribe((params: Params) => {
+          const keyParams = Object.keys(params);
+          if (keyParams.indexOf('gameid') >= 0) {
+            const gameId = +params['gameid'];
+            this.refreshGame(gameId);
+          } else {
+            this.router.navigate(['/games']);
+          }
+      });
+    } else if (this.game !== null) {
+      this.refreshScore();
+    }
+  }
+
+  public ngOnDestroy(): void {
+    if (this.scoreSubscription) {
+      this.scoreSubscription.unsubscribe();
     }
 
-    ngOnInit() {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+  }
 
-      if (this.game === null || this.game === undefined) {
-          console.log('load game');
-          // validate parameters
-          this.route.params.subscribe((params: Params) => {
-            const keyParams = Object.keys(params);
-            if (keyParams.indexOf('gameid') >= 0) {
-              const gameId = +params['gameid'];
-              this.gamesDataService.getGame(gameId).subscribe((data) => {
-                this.game = data;
+  private refreshGame(gameId: number): void {
+    this.gamesDataService.getGame(gameId).subscribe(game => {
+      this.game = game;
+      this.refreshScore();
+    }, error => {
+      this.router.navigate(['/games']);
+    });
+  }
 
-                if (this.game === null || this.game === undefined) {
-                  // redirect to select a game
-                  this.router.navigate(['/games']);
-                } else {
-                  console.log('game received isActive:' + this.game.isActive);
-                }
-              }, (error) => {
-                console.log('Games Error:' + error);
-                // redirect to select a game
-                this.router.navigate(['/games']);
-              });
-            } else {
-              console.log('Games Error: lack of parameters: ' + keyParams);
-              this.router.navigate(['/games']);
-            }
-        });
+  private refreshScore(): void {
+    const games = new Array<number>();
+    games.push(this.game.gameId);
+    this.scoreSubscription = this.gamesDataService.getScores(games).subscribe(scores => {
+      if (this.game !== null && this.game !== undefined) {
+        const tempScores = scores.filter(r => r.gameId === this.game.gameId);
+
+        if (tempScores !== null && tempScores.length === 1) {
+          const newScore = tempScores[0];
+
+          // check if score has actually changed
+          if (this.onScoreChanged !== null &&
+             (newScore.awayTeamScore !== this.game.score.awayTeamScore || newScore.homeTeamScore !== this.game.score.homeTeamScore)) {
+            this.onScoreChanged.emit(newScore);
+          }
+
+          this.game.score = newScore;
+        }
+        this.subscribeToScores();
       }
-    }
+    }, error => {
+      console.log('Get Score Error:' + error);
+    });
+  }
 
+  private subscribeToScores(): void {
+    this.timerSubscription = Observable.timer(2000).first().subscribe(() => this.refreshScore());
+  }
 }

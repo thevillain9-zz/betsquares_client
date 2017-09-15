@@ -10,4 +10,7 @@ export interface IScore {
     awayTeamPeriodScores: number[];
     awayTeamTotalScores: number[];
     periodNames: string[];
+    state: number;
+    lastUpdate: string;
+    currentPeriodIndex: number;
 }

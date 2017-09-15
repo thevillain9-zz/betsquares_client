@@ -5,5 +5,6 @@ export interface IGridBox {
     scoreY: number;
     userId: IUser;
     isWinner: boolean;
+    isTempWinner: boolean;
 }
 

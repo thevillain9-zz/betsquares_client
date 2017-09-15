@@ -4,3 +4,8 @@ html, body {
     height: 100%;
     margin: 0;
 }
+
+.last-update-time, .last-update-label {
+    font-style: italic;
+    font-size: 10px;
+}

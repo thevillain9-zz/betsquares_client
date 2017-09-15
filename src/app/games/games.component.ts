@@ -24,34 +24,29 @@ import { GamesServiceToken } from '../shared/services/games.service.token';
     templateUrl: 'games.component.html',
     styleUrls: ['games.component.css']
 })
-export class GamesComponent implements OnInit, OnDestroy {
+export class GamesComponent implements OnInit {
+  gamesDataSource: GamesDataSource | null;
+  sortBy: string = 'sku';
+  gamesLabel: string;
+  isSearchActive: Boolean = false;
 
-    private scoresSubscription: AnonymousSubscription;
-    private timerSubscription: AnonymousSubscription;
+  _searchInputTerm: string = '';
+  gamesDetail: IGameDisplayDetails;
+  isLoadingGames: Boolean = false;
+  loadingLabel: string = 'Loading...';
+  isSearchEnabled: Boolean = false;
+  private _selectedSchedule: number;
 
-    games: IGame[];
-    gamesDataSource: GamesDataSource | null;
-    sortBy: string = 'sku';
-    gamesLabel: string;
-    isSearchActive: Boolean = false;
+  displayedColumns = ['homeTeam', 'awayTeam', 'gameDate', 'join'];
 
-    _searchInputTerm: string = '';
-    gamesDetail: IGameDisplayDetails;
-    isLoadingGames: Boolean = false;
-    loadingLabel: string = 'Loading...';
-    isSearchEnabled: Boolean = false;
-    private _selectedSchedule: number;
-
-    displayedColumns = ['homeTeam', 'awayTeam', 'gameDate', 'join'];
-
-    private searchInput: ElementRef;
-    @ViewChildren('searchBox') set searchBox(content: QueryList<ElementRef>) {
-      if (content !== undefined && content.length > 0 && this.searchInput !== null) {
-        this.searchInput = content.first;
-        this.subscribeFilterGames();
-        this.focusSearchBox();
-      }
+  private searchInput: ElementRef;
+  @ViewChildren('searchBox') set searchBox(content: QueryList<ElementRef>) {
+    if (content !== undefined && content.length > 0 && this.searchInput !== null) {
+      this.searchInput = content.first;
+      this.subscribeFilterGames();
+      this.focusSearchBox();
     }
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -65,28 +60,7 @@ export class GamesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.gamesLabel = 'Games';
-
     this.loadGameDetails();
-  }
-
-
-  ngOnDestroy(): void {
-        if (this.timerSubscription) {
-            this.timerSubscription.unsubscribe();
-        }
-  }
-
-  private subscribeFilterGames(): void {
-    if (this.searchInput !== undefined) {
-      // searches the items
-      Observable.fromEvent(this.searchInput.nativeElement, 'keyup')
-        .debounceTime(200)
-        .distinctUntilChanged()
-        .subscribe(() => {
-          if (!this.gamesDataSource) { return; }
-          this.gamesDataSource.filter = this.searchInput.nativeElement.value;
-        });
-    }
   }
 
   //#region Property Get/Set
@@ -97,24 +71,6 @@ export class GamesComponent implements OnInit, OnDestroy {
   }
 
   get selectedSchedule(): number { return this._selectedSchedule; }
-
-  private async loadGameDetails(): Promise<void> {
-    this.isLoadingGames = true;
-    this.gamesDataService.getGamesDisplayDetails().subscribe((data) => {
-      this.gamesDetail = data;
-      this.selectedSchedule = this.gamesDetail.currentPeriod;
-      this.applyCurrentPeriod();
-    }, (error) => {
-      console.log('loadGameDetails Error=' + error);
-    });
-
-    // this.gamesDataService.getGamesDisplayDetails().subscribe((data) => {
-    //       this.gamesDetail = data;
-    //       this.applyCurrentPeriod();
-    //   },(error) => {
-
-    // });
-  }
 
   public onChangePeriod(newPeriod: number): void {
     if (this.gamesDetail === undefined) {
@@ -138,7 +94,39 @@ export class GamesComponent implements OnInit, OnDestroy {
     this.focusSearchBox();
   }
 
+  public onSearchKeyDown(key: KeyboardEvent) {
+    if (key != null && key.code === 'Escape') {
+      this.toggleSearch();
+    }
+  }
+
+  private subscribeFilterGames(): void {
+    // subscribe to search input to filter list of available games
+    if (this.searchInput !== undefined) {
+      Observable.fromEvent(this.searchInput.nativeElement, 'keyup')
+        .debounceTime(200)
+        .distinctUntilChanged()
+        .subscribe(() => {
+          if (!this.gamesDataSource) { return; }
+          this.gamesDataSource.filter = this.searchInput.nativeElement.value;
+        });
+    }
+  }
+
+  private async loadGameDetails(): Promise<void> {
+    this.isLoadingGames = true;
+    this.gamesDataService.getGamesDisplayDetails().subscribe((data) => {
+      this.gamesDetail = data;
+      this.selectedSchedule = this.gamesDetail.currentPeriod;
+      this.applyCurrentPeriod();
+    }, (error) => {
+      // TODO: handle error
+      console.log('loadGameDetails Error=' + error);
+    });
+  }
+
   private focusSearchBox() {
+    // focus search box
     if (this.isSearchActive && this.searchInput !== null  &&
         this.searchInput !== undefined  &&
         this.searchInput.nativeElement !== undefined &&
@@ -147,31 +135,21 @@ export class GamesComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onSearchKeyDown(key: KeyboardEvent) {
-    if (key != null && key.code === 'Escape') {
-      this.toggleSearch();
-    }
-  }
-
   private applyCurrentPeriod(): void {
-    if (this.gamesDetail === undefined) {
-      return;
-    }
-
     // loads games for selected period
-    this.loadGamesByPeriod();
+    if (this.gamesDetail !== undefined) {
+      this.loadGamesByPeriod();
+    }
   }
 
   private loadGamesByPeriod(): void {
+    this.isLoadingGames = true;
+    // console.log('loading games by period ' + this.selectedSchedule);
     // load games
-    this.gamesDataService.getGames(this.gamesDetail.currentPeriod).subscribe(games2 => {
-      setTimeout(() => {
-          this.games = games2;
-          this.gamesDataSource = new GamesDataSource(this.games);
-          this.isLoadingGames = false;
-        }, 3000);
+    this.gamesDataService.getGames(this.selectedSchedule).subscribe(games2 => {
+      this.gamesDataSource = new GamesDataSource(games2);
+      this.isLoadingGames = false;
     }, error => {
-      this.games = [];
       this.isLoadingGames = false;
       // TODO: Handle error
       console.log('games received: ' + error);
@@ -182,51 +160,6 @@ export class GamesComponent implements OnInit, OnDestroy {
     // TODO: determine how to figure out local time zone
     return 'PDT';
   }
-
-
-  // refreshScores() {
-  //     if(this.myGridGames != null && this.myGridGames.length > 0) {
-
-  //       let gameIds = [];
-  //       this.myGridGames.forEach((game) => {
-  //         gameIds.push(game.game.gameId);
-  //       });
-
-  //       this.myGridGames.forEach(game => {
-  //               let updateTeamScore = Math.random();
-  //               if(updateTeamScore < 0.5) {
-  //                 game.game.score.awayTeamScore = Math.round(Math.random() * 100);
-  //               }
-  //               else {
-  //                 game.game.score.homeTeamScore = Math.round(Math.random() * 100);
-  //               }
-  //             });
-  //     }
-
-  //     this.subscribeToScores();
-  // }
-
-  // public isValidBoxesExist(gridGame: IGridGame) {
-  //   let isAllBoxesValid = true;
-  //   let boxes = gridGame.boxes != null && gridGame.boxes.length > 0 ? gridGame.boxes : null;
-  //   if(boxes != null) {
-  //     isAllBoxesValid = boxes.every((box, index, arr) => {
-  //       if(box.scoreX == undefined || box.scoreY == undefined)
-  //         return false;
-  //       else
-  //         return true;
-  //     });
-  //   }
-  //   else {
-  //     isAllBoxesValid = false;
-  //   }
-  //   return isAllBoxesValid;
-  // }
-
-  // private subscribeToScores() {
-  //   this.timerSubscription = Observable.timer(30000).first().subscribe(() => this.refreshScores());
-  // }
-
 }
 
 

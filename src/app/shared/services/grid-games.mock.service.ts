@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { IUser } from '../models/iuser';
 import { IGridGame } from '../models/igrid-game';
 import { IGridBox } from '../models/igrid-box';
+import { IGridGamesByUser } from '../models/igrid-game-by-user';
 import { IGridGamesService } from './grid-games.service.interface';
 import { IUsersService } from './users.service.interface';
 import { UsersServiceToken } from './users.service.token';
@@ -91,11 +92,25 @@ export class MockGridGamesService implements IGridGamesService {
         return tempObserveGridGame;
     }
 
-    getGridGamesByGameId(gameId) {
-        return null;
-    }
+    getGridGamesByUserId(userId): Observable<IGridGamesByUser[]> {
+        const tempGridGame = this.getGridGameByGridGameId(1);
+        const tempGridGameByUser = new Array();
+        tempGridGameByUser.push(<IGridGamesByUser>{
+            game: null,
+            gridGames: new Array<IGridGame>()
+        });
+        const tempObserveGridGame = new Observable<IGridGamesByUser[]>((observer: any) => {
+            tempGridGame.subscribe(game => {
+                tempGridGameByUser[0].game = game.game;
+                tempGridGameByUser[0].gridGames.push(game);
+                observer.next(tempGridGameByUser);
+                observer.complete();
+            }, (error) => {
+                observer.complete();
+            });
 
-    getGridGamesByUserId(userId) {
-        return null;
+        });
+
+        return tempObserveGridGame;
     }
 }

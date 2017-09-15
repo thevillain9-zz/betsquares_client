@@ -1,3 +1,89 @@
-<p>
-  my-games works!
-</p>
+<md-card *ngIf="currentUser != null">
+  <md-card-title>{{userGamesLabel}}</md-card-title>
+  <md-card-content>
+      <md-table [dataSource]="myGamesDataSource" *ngIf="!isLoadingGames">
+        <ng-container cdkColumnDef="gameDate">
+          <md-header-cell *cdkHeaderCellDef>Game Date</md-header-cell>
+          <md-cell *cdkCellDef="let gridGame">
+              <span>{{gridGame.game.gameDate | date :'shortDate'}}</span> <span *ngIf="!gridGame.game.isActive"><br/> {{gridGame.game.gameDate | date :'shortTime'}}</span>
+            </md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="gameMatchup">
+          <md-header-cell *cdkHeaderCellDef>Matchup</md-header-cell>
+          <md-cell *cdkCellDef="let gridGame"> 
+            {{gridGame.game.awayTeam.location}} vs {{gridGame.game.homeTeam.location}}
+          </md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="gameScore">
+          <md-header-cell *cdkHeaderCellDef>Score</md-header-cell>
+          <md-cell *cdkCellDef="let gridGame"> 
+            <span *ngIf="gridGame.game.isActive">
+              <!-- <a [routerLink]="['/games/',gridGame.game.gameId]"> -->
+                <app-score [homeTeamScore]="gridGame.game.score.homeTeamScore"
+                [awayTeamScore]="gridGame.game.score.awayTeamScore"></app-score>
+            </span>
+          </md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="myBoxes">
+          <md-header-cell *cdkHeaderCellDef>Boxes</md-header-cell>
+          <md-cell *cdkCellDef="let gridGame"> 
+            <div *ngFor="let gridGame2 of gridGame.gridGames">
+              <span class="boxName">{{gridGame2.name}}:</span>
+              <span class="boxes">{{(gridGame2.boxes | boxUserFilter : boxesByUser).length}} boxes</span>
+              <span>{{(gridGame2.boxes | boxUserFilter : boxesByUserWinning).length}} winning</span>
+              <span>{{(gridGame2.boxes | boxUserFilter : boxesByUserWinning).length}} maybe</span>
+
+              
+              
+            </div>
+              
+          </md-cell>
+        </ng-container>
+        <!-- <ng-container cdkColumnDef="gameDate">
+          <md-header-cell *cdkHeaderCellDef>Score</md-header-cell>
+          <md-cell *cdkCellDef="let game"><a class="gameLink" [routerLink]="['/games/',game.gameId]">{{game.gameDate | date :'shortDate'}} <br/>{{game.gameDate | date :'shortTime'}}</a></md-cell>
+        </ng-container>
+        <ng-container cdkColumnDef="join">
+          <md-header-cell *cdkHeaderCellDef>Boxes</md-header-cell>
+          <md-cell *cdkCellDef="let game"><a md-icon-button [routerLink]="['/join/game/',game.gameId]"><md-icon>grid_on</md-icon></a></md-cell>
+        </ng-container> -->
+        
+        <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+        <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+    </md-table>
+    
+    <!-- <table>
+      <thead><tr><th>Date</th><th>Matchup</th><th>Score</th><th>Wins</th><th>Boxes</th></tr></thead>
+      <tbody>
+        <tr *ngIf="myGridGames == null">
+          <td colspan="5" style="text-align: center"><md-progress-bar mode="indeterminate"></md-progress-bar></td></tr>
+        <tr class="game-row" *ngFor="let gridGame of myGridGames; trackBy: trackGame">
+          <td class="game-row"></td>
+          <td><a href="{{gridGame.game.awayTeam.teampageUri}}">
+            {{gridGame.game.awayTeam.shortName}}</a> vs 
+            <a href="{{gridGame.game.homeTeam.teampageUri}}">{{gridGame.game.homeTeam.shortName}}</a></td>
+          <td>
+            <a [routerLink]="['/games/',gridGame.game.gameId]">
+            <app-score 
+              [homeTeamScore]="gridGame.game.score.homeTeamScore"
+              [awayTeamScore]="gridGame.game.score.awayTeamScore"></app-score></a></td>
+          <td>
+            <button type="button">+</button>
+
+            <div *ngFor="let gridGame2 of gridGame.gridGames">
+              <span class="boxName">{{gridGame2.name}}</span>
+              <table class="table table-sm">
+                <tr><th>NYG</th><th>DAL</th></tr>
+                <tbody>
+                <tr><td>0</td><td>2</td></tr>
+                <tr><td>5</td><td>3</td></tr>
+                </tbody>
+              </table>
+            </div>
+              
+          </td>
+        </tr>
+      </tbody>
+    </table> -->
+  </md-card-content>
+</md-card>

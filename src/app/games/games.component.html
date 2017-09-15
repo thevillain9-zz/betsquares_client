@@ -1,5 +1,5 @@
-<my-games></my-games>
-
+<app-my-games></app-my-games>
+<p></p>
 <md-card>      
   <div fxlayout="row"  fxLayoutAlign="start center"> 
     <span *ngIf="!isSearchActive">
@@ -29,7 +29,7 @@
         </div>
     </div>  
     <div>
-      <md-table [dataSource]="gamesDataSource" *ngIf="!isLoadingGames && games?.length > 0">
+      <md-table [dataSource]="gamesDataSource" *ngIf="!isLoadingGames">
         <ng-container cdkColumnDef="homeTeam">
           <md-header-cell *cdkHeaderCellDef>Home</md-header-cell>
           <md-cell *cdkCellDef="let game">
