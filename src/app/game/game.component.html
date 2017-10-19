@@ -1,4 +1,4 @@
-<md-card *ngIf="game">
+<mat-card *ngIf="game">
     <div class="container">
         <div fxLayout="row" fxFlex fxLayoutAlign="center center">
             <div fxFlex="33%"  fxLayoutAlign="end center">
@@ -26,18 +26,16 @@
             </div>
         </div>
     </div>
-   <md-card-content>
+   <mat-card-content>
        <div fxLayout="row" fxFill fxLayoutAlign="center center">
             <p class="game-date-label" *ngIf="game.score.state === 0">
-                @ {{game.gameDate | date :'shortDate'}} {{game.gameDate | date :'shortTime'}}
+               {{game.gameDate | date :'shortDate'}}  @  {{game.gameDate | date :'shortTime'}}
             </p>
             <table class="mat-table score-table" *ngIf="game.score.state !== 0">
                 <thead><tr class="mat-header-row">
                     <th>
-                        <div class="periodTime">
-                            <span *ngIf="game.score.state === 1">{{game.score.currentPeriod}}  {{game.score.currentTime}}</span>
-                            <span *ngIf="game.score.state === 2">Final</span>
-                        </div>
+                        <span *ngIf="game.score.state === 1">{{game.score.currentPeriod}}  {{game.score.currentTime}}</span>
+                        <span *ngIf="game.score.state === 2">Final</span>
                     </th>
                     <th class="mat-header-cell mat-cell" *ngFor="let period of game.score.periodNames">{{period}}</th>
                 </tr></thead>
@@ -60,11 +58,11 @@
             </table>
        </div>
     
-  </md-card-content> 
-  <md-card-actions *ngIf="game.score.state === 0">
-      <button md-raised-button color="accent" [routerLink]="['/join/game/', game.gameId]">Start Grid Game</button>
-  </md-card-actions>
-  <md-card-footer>
+  </mat-card-content> 
+  <mat-card-actions *ngIf="game.score.state === 0">
+      <button mat-raised-button color="accent" [routerLink]="['/join/game/', game.gameId]">Start Grid Game</button>
+  </mat-card-actions>
+  <mat-card-footer>
       <span class="last-update-label">Last Update: </span><span class="last-update-time">{{game.score.lastUpdate | date :'mediumTime'}}</span>
-  </md-card-footer>
-</md-card>
+  </mat-card-footer>
+</mat-card>

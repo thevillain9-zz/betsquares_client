@@ -3,11 +3,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule, Http } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { MaterialModule} from '@angular/material';
-import { CdkTableModule } from '@angular/cdk';
-import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+
+import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSidenavModule, MatMenuModule, MatSelectModule, MatTableModule, MatSliderModule,
+         MatCardModule, MatIconModule, MatToolbarModule, MatButtonModule, MatListModule, MatInputModule } from '@angular/material'
+
+
 import { appRoutes } from './routes';
 
 import { AppComponent } from './app.component';
@@ -68,10 +71,10 @@ import { BoxUserPipe } from './shared/pipes/box-user-pipe';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    MaterialModule,
     FlexLayoutModule.forRoot(),
+    MatSidenavModule, MatMenuModule, MatSelectModule, MatTableModule, MatSliderModule, MatCardModule, MatIconModule,
+    MatButtonModule, MatToolbarModule, MatListModule, MatInputModule,
     BrowserAnimationsModule,
-    CdkTableModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [

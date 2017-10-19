@@ -1,6 +1,6 @@
 import { Input, Component, OnInit, OnDestroy, SimpleChanges, Inject, ViewChild, ViewChildren,
          ElementRef, Renderer, QueryList } from '@angular/core';
-import { DataSource} from '@angular/cdk';
+import { DataSource} from '@angular/cdk/collections';
 import { ActivatedRoute, Router, Params} from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AnonymousSubscription } from 'rxjs/Subscription';
@@ -8,6 +8,7 @@ import { BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 import { IGame } from '../shared/models/IGame';
 import { IUser } from '../shared/models/IUser';
+import { IScore } from '../shared/models/IScore';
 import { IGridGamesByUser } from '../shared/models/igrid-game-by-user';
 import { IGridGame } from '../shared/models/igrid-game';
 import { IGameDisplayDetails} from '../shared/models/igames-display-details';
@@ -38,11 +39,21 @@ export class GridGameComponent implements OnInit, OnDestroy {
         @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
         @Inject(UsersServiceToken) private usersService: IUsersService) {
 
-      // initialize grid box
-      this.scoreNumbers = new Array<String>();
-      this.scoreNumbers.push('');
-      for (let i = 0; i < 10; i++) {
-        this.scoreNumbers[i] = i + '';
+
+      this.buildGridGame();
+
+      if (this.gridGame === null || this.gridGame === undefined) {
+
+        // validate parameters
+        this.route.params.subscribe((params: Params) => {
+          const keyParams = Object.keys(params);
+          if (keyParams.indexOf('gridgameid') >= 0) {
+            this.gridGameId = +params['gridgameid'];
+            this.refreshGridGame();
+          } else {
+            this.router.navigate(['/games']);
+          }
+      });
       }
     }
 
@@ -70,15 +81,15 @@ export class GridGameComponent implements OnInit, OnDestroy {
         }
     }
 
-    public onGameScoreChanged(data: any): void {
-      console.log(data);
+    public onGameScoreChanged(data: IScore): void {
+      this.gridGame.game.score = data;
+      this.refreshWinningSquares();
     }
 
     private refreshGridGame(): void {
 
       this.gridGamesDataService.getGridGameByGridGameId(this.gridGameId).subscribe((data) => {
         this.gridGame = data;
-        // this.subscribeToWinningSquares();
       }, (error) => {
         // TODO: handle error
         // redirect to select a game
@@ -86,11 +97,36 @@ export class GridGameComponent implements OnInit, OnDestroy {
       });
     }
 
-    private refreshWinningSquares(): void {
-
+    private buildGridGame(): void {
+      // initialize grid box
+      this.scoreNumbers = new Array<String>();
+      this.scoreNumbers.push('');
+      for (let i = 0; i < 10; i++) {
+        this.scoreNumbers[i] = i + '';
+      }
     }
-    private validateWinningSquare(): void {
 
+    private refreshWinningSquares(): void {
+      const maxPeriodIdx = this.gridGame.game.score.currentPeriodIndex;
+      for (let boxIdx = 0; boxIdx < this.gridGame.boxes.length; boxIdx++) {
+        const gridBox = this.gridGame.boxes[boxIdx];
+        gridBox.isWinner = false;
+        gridBox.isTempWinner = false;
+        for (let periodIdx = 0; periodIdx < maxPeriodIdx + 1; periodIdx++) {
+          const awayScore = this.gridGame.game.score.awayTeamTotalScores[periodIdx].toString();
+          const homeScore = this.gridGame.game.score.homeTeamTotalScores[periodIdx].toString();
+          const awayScoreEnd = awayScore.substr(awayScore.length - 1);
+          const homeScoreEnd = homeScore.substr(homeScore.length - 1);
+
+          const isWinner = (+awayScoreEnd === gridBox.scoreX) && (+homeScoreEnd === gridBox.scoreY);
+          if (isWinner && maxPeriodIdx === periodIdx && this.gridGame.game.score.state !== 2) {
+            gridBox.isTempWinner = true;
+          } else if (isWinner) {
+            gridBox.isWinner = true;
+          }
+        }
+      }
     }
 
 }
+

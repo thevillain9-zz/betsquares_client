@@ -10,17 +10,19 @@
 $app-primary: mat-palette($mat-green);
 $app-accent:  mat-palette($mat-blue);
 $app-warn:    mat-palette($mat-red, 600);
-$md-is-dark-theme: true;
+$mat-is-dark-theme: true;
 
 // Create the theme object (a Sass map containing all of the palettes).
-$app-theme: if($md-is-dark-theme, mat-dark-theme($app-primary, $app-accent, $app-warn), mat-light-theme($app-primary, $app-accent, $app-warn));
+$app-theme: if($mat-is-dark-theme, mat-dark-theme($app-primary, $app-accent, $app-warn), mat-light-theme($app-primary, $app-accent, $app-warn));
 
 @import '/app/game/game.component.scss-theme.scss';
 @import '/app/grid-game/grid-game.component.scss-theme.scss';
+@import '/app/score/score.component.scss-theme.scss';
 
 @mixin custom-theme($theme) {
   @include game-component-theme($theme);
   @include grid-game-component-theme($theme);
+  @include score-component-theme($theme);
 }
 
 // Include theme styles for core and each component used in your app.

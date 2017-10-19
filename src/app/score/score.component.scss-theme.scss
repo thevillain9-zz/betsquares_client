@@ -1,0 +1,44 @@
+
+@import '~@angular/material/theming';
+
+@mixin score-component-theme($theme) {
+
+    $background: map-get($theme, background);
+
+    @-webkit-keyframes fadeIt {
+      0%   { background-color: mat-color($background, card); font-weight: normal; }
+      25%  { background-color: #267F00; font-weight: bold; border-radius: 8px; }
+      100% { background-color: mat-color($background, card); font-weight: normal; }
+    }
+    @-moz-keyframes fadeIt {
+      0%   { background-color: mat-color($background, card); font-weight: normal;  }
+      25%  { background-color: #267F00; font-weight: bold; border-radius: 8px; }
+      100% { background-color: mat-color($background, card); font-weight: normal; }
+    }
+    @-o-keyframes fadeIt {
+      0%   { background-color: mat-color($background, card); font-weight: normal;  }
+      25%  { background-color: #267F00; font-weight: bold; border-radius: 8px; }
+      100% { background-color: mat-color($background, card); font-weight: normal; }
+    }
+    @keyframes fadeIt {
+      0%   { background-color: mat-color($background, card); font-weight: normal;  }
+      25%  { background-color: #267F00; font-weight: bold; border-radius: 8px; }
+      100% { background-color: mat-color($background, card); font-weight: normal; }
+      
+    }
+
+    .scoreUpdated {    
+      /*background-color: green;*/
+      
+      background-image:none !important;
+      -webkit-animation: fadeIt 10s ease-in-out; 
+         -moz-animation: fadeIt 10s ease-in-out; 
+           -o-animation: fadeIt 10s ease-in-out; 
+              animation: fadeIt 10s ease-in-out;
+  }
+  
+  .score {
+      padding: 3px;
+      
+  }
+}

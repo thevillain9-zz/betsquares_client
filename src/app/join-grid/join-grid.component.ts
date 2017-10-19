@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterStateSnapshot } from '@angular/router';
-import { MdSnackBar} from '@angular/material';
+import { MatSnackBar} from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../../environments/environment';
 import { IGridGame } from '../shared/models/igrid-game';
@@ -77,7 +77,7 @@ export class JoinGridComponent implements OnInit {
     constructor(private route: ActivatedRoute,
     private router: Router,
     public fb: FormBuilder,
-    private _snackbar: MdSnackBar,
+    private _snackbar: MatSnackBar,
     @Inject(GamesServiceToken) private gamesDataService: IGamesService,
     @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
     @Inject(UsersServiceToken) private usersService: IUsersService) {

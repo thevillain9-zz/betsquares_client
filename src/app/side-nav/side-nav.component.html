@@ -1,17 +1,17 @@
 <h2>BetSquares</h2>
-<md-divider></md-divider>
-<md-nav-list>
-  <a *ngIf="currentUser" md-list-item (click)="routeAndClose('/mygames')">
+<mat-divider></mat-divider>
+<mat-nav-list>
+  <a *ngIf="currentUser" mat-list-item (click)="routeAndClose('/mygames')">
     <h4>My Games</h4>
   </a>
-  <md-divider *ngIf="currentUser"></md-divider>
-  <a md-list-item (click)="routeAndClose('/games')">
+  <mat-divider *ngIf="currentUser"></mat-divider>
+  <a mat-list-item (click)="routeAndClose('/games')">
     <h4>Games</h4>
   </a>
-    <a md-list-item (click)="routeAndClose('/rules')">
+    <a mat-list-item (click)="routeAndClose('/rules')">
     <h4>Rules</h4>
   </a>
-  <a md-list-item (click)="routeAndClose('/about')">
+  <a mat-list-item (click)="routeAndClose('/about')">
     <h4>About</h4>
   </a>
-</md-nav-list>
+</mat-nav-list>

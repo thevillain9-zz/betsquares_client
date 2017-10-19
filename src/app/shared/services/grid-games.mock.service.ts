@@ -29,6 +29,9 @@ export class MockGridGamesService implements IGridGamesService {
             }
         }
 
+        // user can only have 1 to 50 boxes
+        let boxesPerUser = Math.floor(Math.random() * 50) - 1;
+
         const staticUser = this.usersService.getCurrentUser();
         const tempGridBoxes = new Array<IGridBox>();
         while (tempAllBoxes.length !== 0) {
@@ -39,24 +42,24 @@ export class MockGridGamesService implements IGridGamesService {
                 tempGridBoxes.push(<IGridBox>{
                     scoreX: box[0],
                     scoreY: box[1],
-                    userId: staticUser
+                    userId: boxesPerUser > 0 ? staticUser : null
                     });
 
-                // delete the item
+                // decrement count
+                if (boxesPerUser > 0) {
+                    boxesPerUser -= 1;
+                }
+
+                // delete the last item item
                 tempAllBoxes.splice(randomBoxIndex, 1);
             }
 
         }
 
+        // order boxes
         tempGridBoxes.sort( (item1, item2) => {
             return (item1.scoreX * 10 + item1.scoreY) - (item2.scoreX * 10 + item2.scoreY);
         });
-
-        const winningBoxes = tempGridBoxes.filter(box =>  (box.scoreX === 3 && box.scoreY === 7) ||
-                                                        (box.scoreX === 4 && box.scoreY === 6) ||
-                                                        (box.scoreX === 0 && box.scoreY === 6) ||
-                                                        (box.scoreX === 7 && box.scoreY === 0));
-        winningBoxes.forEach((box) => { box.isWinner = true; });
 
         return tempGridBoxes;
     }
@@ -67,21 +70,30 @@ export class MockGridGamesService implements IGridGamesService {
 
         const tempGame = this.gamesDataService.getGame(1);
 
-        const gridBoxesTemp = this.getAllBoxes();
-
         const tempGridGame = <IGridGame>{
             gridGameId: 1,
             name: 'Test grid game',
             password: 'test123',
             owner: null,
             game: null,
-            boxes: gridBoxesTemp
+            boxes: this.getAllBoxes()
+        };
+
+        const tempGridGame2 = <IGridGame>{
+            gridGameId: 2,
+            name: 'Sundays are for the boys',
+            password: 'test123',
+            owner: null,
+            game: null,
+            boxes: this.getAllBoxes()
         };
 
         const tempObserveGridGame = new Observable<IGridGame>((observer: any) => {
             tempGame.subscribe(game => {
                 tempGridGame.game = game;
+                tempGridGame2.game = game;
                 observer.next(tempGridGame);
+                observer.next(tempGridGame2);
                 observer.complete();
             }, (error) => {
                 observer.complete();

@@ -1,6 +1,6 @@
 import { Input, Component, OnInit, OnDestroy, SimpleChanges, Inject, ViewChild, ViewChildren,
          ElementRef, Renderer, QueryList, Output, EventEmitter } from '@angular/core';
-import { DataSource} from '@angular/cdk';
+import { DataSource} from '@angular/cdk/collections';
 import { ActivatedRoute, Router, Params} from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AnonymousSubscription } from 'rxjs/Subscription';
@@ -86,15 +86,24 @@ export class GameComponent implements OnInit, OnDestroy {
         if (tempScores !== null && tempScores.length === 1) {
           const newScore = tempScores[0];
 
-          // check if score has actually changed
+          // check if score, period or state has changed
           if (this.onScoreChanged !== null &&
-             (newScore.awayTeamScore !== this.game.score.awayTeamScore || newScore.homeTeamScore !== this.game.score.homeTeamScore)) {
+             (newScore.awayTeamScore !== this.game.score.awayTeamScore ||
+              newScore.homeTeamScore !== this.game.score.homeTeamScore ||
+              newScore.currentPeriod !== this.game.score.currentPeriod ||
+              newScore.state !== this.game.score.state)) {
+               console.log('Score changed' + newScore.awayTeamScore + ' vs ' + newScore.homeTeamScore);
             this.onScoreChanged.emit(newScore);
           }
 
           this.game.score = newScore;
         }
-        this.subscribeToScores();
+
+        if (this.game.score.state !== 2) {
+          // subscribe to score as long as game is not finished
+          this.subscribeToScores();
+        }
+
       }
     }, error => {
       console.log('Get Score Error:' + error);

@@ -1,158 +1,158 @@
     <div fxLayout="row">
-        <md-card>
-            <md-card-title>Start a Grid Iron Game</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Start a Grid Iron Game</mat-card-title>
+            <mat-card-content>
                 <div td-step-actions>
                     Setup a brand new Grid Iron game that you can invite your friends to participate in
                 </div>
-            </md-card-content>
-            <md-card-actions>
-                <button md-raised-button color="accent" (click)="joinGame(1,false)" >New</button>                        
-            </md-card-actions>
-        </md-card>
-        <md-card>
-            <md-card-title>Join a GridIron Game</md-card-title>
-            <md-card-content>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="accent" (click)="joinGame(1,false)" >New</button>                        
+            </mat-card-actions>
+        </mat-card>
+        <mat-card>
+            <mat-card-title>Join a GridIron Game</mat-card-title>
+            <mat-card-content>
                 <div td-step-actions>
                     Find a grid to join that has available squares
                 </div>
-            </md-card-content>
-            <md-card-actions>
-                <button md-raised-button color="accent" (click)="joinGame(1,true)">Join</button>
-            </md-card-actions>
-        </md-card>    
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="accent" (click)="joinGame(1,true)">Join</button>
+            </mat-card-actions>
+        </mat-card>    
     </div>
     <div fxLayout="row" *ngIf="isNewGridVisible">
-        <md-card>
+        <mat-card>
                 <form novalidate [formGroup]="setupGridGameForm" (ngSubmit)="joinGame(2,false)">
-                    <md-card-title-group>
-                        <md-card-title>New Grid Game</md-card-title>
-                        <md-card-subtitle>
-                            <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
-                    </md-card-title-group>
-                    <md-card-content>
+                    <mat-card-title-group>
+                        <mat-card-title>New Grid Game</mat-card-title>
+                        <mat-card-subtitle>
+                            <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></mat-card-subtitle>
+                    </mat-card-title-group>
+                    <mat-card-content>
                         <div>
                             
                                 <div layout="row">
-                                    <md-input-container>
+                                    <mat-input-container>
                                         <input mdInput placeholder="GridIron Name" required formControlName="name" autocomplete="off">
-                                        <md-error>{{formErrors['name']}}</md-error>
-                                    </md-input-container>
+                                        <mat-error>{{formErrors['name']}}</mat-error>
+                                    </mat-input-container>
                                 </div>
                                 <div>
-                                    <md-input-container>
+                                    <mat-input-container>
                                         <input type="password" mdInput required placeholder="Password" formControlName="password"> 
-                                        <md-error>{{formErrors['password']}}</md-error>
-                                    </md-input-container>
-                                    <md-input-container>
+                                        <mat-error>{{formErrors['password']}}</mat-error>
+                                    </mat-input-container>
+                                    <mat-input-container>
                                         <input type="password" mdInput required placeholder="Confirm Password" formControlName="passwordConfirm"> 
-                                        <md-error>{{formErrors['passwordConfirm']}}</md-error>
-                                    </md-input-container>
+                                        <mat-error>{{formErrors['passwordConfirm']}}</mat-error>
+                                    </mat-input-container>
                                 </div>
                                 <!--<div>
-                                    <md-input-container>
+                                    <mat-input-container>
                                         <input mdInput placeholder="Setup fee" required formControlName="fee"  autocomplete="off">
-                                        <md-error>{{formErrors['fee']}}</md-error>
-                                    </md-input-container>
+                                        <mat-error>{{formErrors['fee']}}</mat-error>
+                                    </mat-input-container>
                                 </div>-->                
                         </div>
-                    </md-card-content>
-                    <md-card-actions>
-                        <button md-raised-button color="accent" type="submit" [disabled]="!setupGridGameForm.valid">Continue</button>
-                    </md-card-actions>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-raised-button color="accent" type="submit" [disabled]="!setupGridGameForm.valid">Continue</button>
+                    </mat-card-actions>
                 </form>
-            </md-card>
+            </mat-card>
     </div>
     <div fxLayout="row" *ngIf="isJoinGridVisible">
-        <md-card>
+        <mat-card>
             <form novalidate [formGroup]="joinGridIronGameForm" (ngSubmit)="joinGame(2,true)">
-                <md-card-title-group>
-                    <md-card-title>Join GridIron Game</md-card-title>
-                    <md-card-subtitle>
-                        <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
-                </md-card-title-group>        
-                <md-card-content>
+                <mat-card-title-group>
+                    <mat-card-title>Join GridIron Game</mat-card-title>
+                    <mat-card-subtitle>
+                        <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></mat-card-subtitle>
+                </mat-card-title-group>        
+                <mat-card-content>
                     <div>
                         
                             <div layout="row">
-                                <md-input-container>
+                                <mat-input-container>
                                     <input mdInput placeholder="GridIron ID" required formControlName="gridIronGameId" autocomplete="off">
-                                    <md-error>{{formErrors['gridIronGameId']}}</md-error>
-                                </md-input-container>
+                                    <mat-error>{{formErrors['gridIronGameId']}}</mat-error>
+                                </mat-input-container>
                             </div>
                             <div>
-                                <md-input-container>
+                                <mat-input-container>
                                     <input type="password" mdInput required placeholder="Password" formControlName="joinPassword"> 
-                                    <md-error>{{formErrors['joinPassword']}}</md-error>
-                                </md-input-container>
+                                    <mat-error>{{formErrors['joinPassword']}}</mat-error>
+                                </mat-input-container>
                             </div>
                         
                     </div>
-                </md-card-content>
-                <md-card-actions>
-                    <button md-raised-button color="accent" type="submit">Join</button>
-                </md-card-actions>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-raised-button color="accent" type="submit">Join</button>
+                </mat-card-actions>
             </form>
-        </md-card>
+        </mat-card>
     </div>
     <div fxLayout="row">
-        <md-card>
-            <md-card-title-group>
-                <md-card-title>How many squares?</md-card-title>
-                <md-card-subtitle>
-                    <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></md-card-subtitle>
-            </md-card-title-group>
+        <mat-card>
+            <mat-card-title-group>
+                <mat-card-title>How many squares?</mat-card-title>
+                <mat-card-subtitle>
+                    <span *ngIf="game != undefined && game != null">{{game?.homeTeam.location}} @ {{game?.awayTeam.location}} <br/>{{game.gameDate | date : 'shortDate'}}</span></mat-card-subtitle>
+            </mat-card-title-group>
             
-            <md-card-content>
+            <mat-card-content>
                 <div>
                     <span>Seleted Squares:</span>
                     <span>{{selectedSquareSlide.value}}</span>
                 </div>
                 <div>
-                    <md-slider #selectedSquareSlide
+                    <mat-slider #selectedSquareSlide
                         [max]="maxSquaresAvailable"
                         [min]="1"
                         [step]="1"
                         [thumb-label]="true"
                         [value]="selectedSquares">
-                    </md-slider>
+                    </mat-slider>
                     <span>{{maxSquaresAvailable}}</span>
                 </div>
-            </md-card-content>
-            <md-card-actions>
-                <button md-raised-button color="accent" (click)="joinGame(3)">Register</button>
-            </md-card-actions>
-        </md-card>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button color="accent" (click)="joinGame(3)">Register</button>
+            </mat-card-actions>
+        </mat-card>
     </div>
 
     <div>
-        <md-card *ngIf="isSaving">
-            <md-card-content>
+        <mat-card *ngIf="isSaving">
+            <mat-card-content>
                 <div layout="column" layout-align="center center">
                     <h3>Saving...</h3>
-                    <md-progress-bar mode="indeterminate"></md-progress-bar>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                 </div>            
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
 
-        <md-card *ngIf="!isSaving">
-            <md-card-title-group>
-                <md-card-title>Share</md-card-title>            
-            </md-card-title-group>
+        <mat-card *ngIf="!isSaving">
+            <mat-card-title-group>
+                <mat-card-title>Share</mat-card-title>            
+            </mat-card-title-group>
             
-            <md-card-content>
+            <mat-card-content>
                 <div>
                         <h4>Email Friends</h4>
                         <form novalidate [formGroup]="joinGridIronGameForm" (ngSubmit)="joinGame(2,true)">
-                            <md-input-container>
+                            <mat-input-container>
                                 <input mdInput placeholder="Email Address" required autocomplete="off">
-                            </md-input-container>
+                            </mat-input-container>
                         </form>
                         <div>
-                            <button md-raised-button color='primary'>Email</button>
-                            <button md-raised-button color="accent">Copy Link</button>
+                            <button mat-raised-button color='primary'>Email</button>
+                            <button mat-raised-button color="accent">Copy Link</button>
                         </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div> 

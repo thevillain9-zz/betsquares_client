@@ -1,6 +1,6 @@
 import { Input, Output, Component, OnInit, OnDestroy, Inject, EventEmitter} from '@angular/core';
 import { ActivatedRoute, Router} from '@angular/router';
-import {MdMenuTrigger} from '@angular/material';
+import { MatMenuTrigger } from '@angular/material';
 
 import { IUser } from '../shared/models/IUser';
 import { IUsersService } from '../shared/services/users.service.interface';

@@ -17,6 +17,10 @@
         background: mat-color($primary, .8);
     }
 
+    .grid-cell-temp-winner {
+        background: mat-color($primary, .25);
+    }
+
     .grid-game-table td{
         padding: 10px;
         border: 1px solid mat-color($foreground, divider);

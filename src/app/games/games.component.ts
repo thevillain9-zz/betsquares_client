@@ -1,6 +1,6 @@
 import { Input, Component, OnInit, OnDestroy, SimpleChanges, Inject, ViewChild, ViewChildren,
          ElementRef, Renderer, QueryList, ChangeDetectorRef } from '@angular/core';
-import { DataSource} from '@angular/cdk';
+import { DataSource} from '@angular/cdk/collections';
 import { ActivatedRoute, Router} from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AnonymousSubscription } from 'rxjs/Subscription';
@@ -26,18 +26,18 @@ import { GamesServiceToken } from '../shared/services/games.service.token';
 })
 export class GamesComponent implements OnInit {
   gamesDataSource: GamesDataSource | null;
-  sortBy: string = 'sku';
-  gamesLabel: string;
+  sortBy: String = 'sku';
+  gamesLabel: String;
   isSearchActive: Boolean = false;
 
-  _searchInputTerm: string = '';
+  _searchInputTerm: String = '';
   gamesDetail: IGameDisplayDetails;
   isLoadingGames: Boolean = false;
-  loadingLabel: string = 'Loading...';
+  loadingLabel: String = 'Loading...';
   isSearchEnabled: Boolean = false;
   private _selectedSchedule: number;
 
-  displayedColumns = ['homeTeam', 'awayTeam', 'gameDate', 'join'];
+  displayedColumns = ['homeTeam', 'awayTeam', 'join'];
 
   private searchInput: ElementRef;
   @ViewChildren('searchBox') set searchBox(content: QueryList<ElementRef>) {

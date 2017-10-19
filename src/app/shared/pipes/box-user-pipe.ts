@@ -14,11 +14,11 @@ export class BoxUserPipe implements PipeTransform {
         }
 
         if (filter.winningFlag === 2) {
-            return items.filter(item => item.userId.userId === filter.currentUser.userId && item.isTempWinner);
+            return items.filter(item => item.userId !== null && item.userId.userId === filter.currentUser.userId && item.isTempWinner);
         } else if (filter.winningFlag === 1) {
-            return items.filter(item => item.userId.userId === filter.currentUser.userId && item.isWinner);
+            return items.filter(item => item.userId !== null && item.userId.userId === filter.currentUser.userId && item.isWinner);
         } else {
-            return items.filter(item => item.userId.userId === filter.currentUser.userId);
+            return items.filter(item => item.userId !== null && item.userId.userId === filter.currentUser.userId);
         }
     }
 }

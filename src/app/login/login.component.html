@@ -3,46 +3,46 @@
     <!-- Fix style to match material design
          https://www.material.io/guidelines/patterns/errors.html#errors-incompatible-state-errors
          -->
-    <md-card style="background: red;" *ngIf="isErrorState">
-        <md-card-header>
-            <md-icon>error_outline</md-icon>
-            <md-card-title>Error</md-card-title>
-            <md-card-subtitle>{{errorMessage}}</md-card-subtitle>
-        </md-card-header>
-    </md-card>
+    <mat-card style="background: red;" *ngIf="isErrorState">
+        <mat-card-header>
+            <mat-icon>error_outline</mat-icon>
+            <mat-card-title>Error</mat-card-title>
+            <mat-card-subtitle>{{errorMessage}}</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
 
     <!--Remove and fix fxLayoutAlign-->
     <p></p>
 
-    <md-card>
+    <mat-card>
         <form novalidate [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <md-card-title>Login</md-card-title>
-        <md-card-content>
+        <mat-card-title>Login</mat-card-title>
+        <mat-card-content>
             <div>
                 <div *ngIf="isLoading" fxLayout="column" fxLayoutAlign="space-between center" style="width:300px;">
-                    <md-progress-bar mode="indeterminate"></md-progress-bar>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                     <p class="savingLabel"></p>
                 </div>          
                 <div [hidden]="isLoading">
                     
-                        <md-input-container>
+                        <mat-input-container>
                             <input mdInput placeholder="Username" required formControlName="username">
-                            <md-error>Username is required</md-error>
-                        </md-input-container>
+                            <mat-error>Username is required</mat-error>
+                        </mat-input-container>
 
-                        <md-input-container>
+                        <mat-input-container>
                             <input type="password" mdInput required placeholder="Password" formControlName="password"> 
-                            <md-error>Password is required</md-error>
-                        </md-input-container>
+                            <mat-error>Password is required</mat-error>
+                        </mat-input-container>
                     
                 </div>
             </div>
-        </md-card-content>
-        <!--<md-divider></md-divider>-->
-        <md-card-actions>
-            <button md-raised-button color="primary" type="submit">Login</button>
-            <button md-raised-button color="accent" router-link="['/signup']">Register</button>
-        </md-card-actions>
+        </mat-card-content>
+        <!--<mat-divider></mat-divider>-->
+        <mat-card-actions>
+            <button mat-raised-button color="primary" type="submit">Login</button>
+            <button mat-raised-button color="accent" router-link="['/signup']">Register</button>
+        </mat-card-actions>
         </form>
-    </md-card>
+    </mat-card>
 </div>

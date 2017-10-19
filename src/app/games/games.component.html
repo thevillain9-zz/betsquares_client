@@ -1,59 +1,59 @@
-<app-my-games></app-my-games>
+<!-- <app-my-games></app-my-games> -->
 <p></p>
-<md-card>      
+<mat-card>      
   <div fxlayout="row"  fxLayoutAlign="start center"> 
     <span *ngIf="!isSearchActive">
       <h2>Games</h2>
     </span>
-    <button md-icon-button (click)="toggleSearch()" *ngIf="!isLoadingGames">
-      <md-icon>search</md-icon>
+    <button mat-icon-button (click)="toggleSearch()" *ngIf="!isLoadingGames">
+      <mat-icon>search</mat-icon>
     </button>
-    <md-input-container *ngIf="isSearchActive" fxFlex="grow" floatPlaceholder="never" class="search-game-box">
+    <mat-input-container *ngIf="isSearchActive" fxFlex="grow" floatPlaceholder="never" class="search-game-box">
       <input  mdInput #searchBox autocomplete="off" placeholder="Search games" (blur)="toggleSearch()" (keydown)="onSearchKeyDown($event)">
-    </md-input-container>
+    </mat-input-container>
     <div *ngIf="gamesDetail" fxFlex fxLayoutAlign="end center">
-      <md-select placeholder="Week" floatPlaceholder="never" [(ngModel)]="selectedSchedule" class="scheduleInput">
-        <md-option *ngFor="let schedule of gamesDetail.displayPeriods" [value]="schedule.period">{{ schedule.displayPeriod }}</md-option>
-      </md-select>
+      <mat-select placeholder="Week" floatPlaceholder="never" [(ngModel)]="selectedSchedule" class="scheduleInput">
+        <mat-option *ngFor="let schedule of gamesDetail.displayPeriods" [value]="schedule.period">{{ schedule.displayPeriod }}</mat-option>
+      </mat-select>
     </div>
   </div>
-  <md-card-content>
-    <md-divider *ngIf="isLoadingGames || filteredGames?.length === 0"></md-divider>
+  <mat-card-content>
+    <mat-divider *ngIf="isLoadingGames || filteredGames?.length === 0"></mat-divider>
     <div *ngIf="!isLoadingGames && filteredGames?.length === 0" fxLayout="row" fxLayoutAlign="center center">
         <h3>No games found.</h3>
     </div>
     <div *ngIf="isLoadingGames" fxLayout="column" fxLayoutAlign="center center">
         <h3>{{loadingLabel}}</h3>
         <div class="loadingProgress">
-          <md-progress-bar mode="indeterminate"></md-progress-bar>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
     </div>  
     <div>
-      <md-table [dataSource]="gamesDataSource" *ngIf="!isLoadingGames">
-        <ng-container cdkColumnDef="homeTeam">
-          <md-header-cell *cdkHeaderCellDef>Home</md-header-cell>
-          <md-cell *cdkCellDef="let game">
+      <mat-table [dataSource]="gamesDataSource" *ngIf="!isLoadingGames">
+        <ng-container matColumnDef="homeTeam">
+          <mat-header-cell *matHeaderCellDef>Home</mat-header-cell>
+          <mat-cell *matCellDef="let game">
               <div fxLayout="column" fxLayoutAlign="start start"><img [src]="game.homeTeam.logoUri"/>
                 <span style="text-align: center">{{game.homeTeam.location}}</span></div>
-            </md-cell>
+            </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="awayTeam">
-          <md-header-cell *cdkHeaderCellDef>Away</md-header-cell>
-          <md-cell *cdkCellDef="let game"> 
+        <ng-container matColumnDef="awayTeam">
+          <mat-header-cell *matHeaderCellDef>Away</mat-header-cell>
+          <mat-cell *matCellDef="let game"> 
             <div fxLayout="column" fxLayoutAlign="start start"><img [src]="game.awayTeam.logoUri" />
-            <span style="text-align: center">{{game.awayTeam.location}}</span></div></md-cell>
+            <span style="text-align: center">{{game.awayTeam.location}}</span></div></mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="gameDate">
-          <md-header-cell *cdkHeaderCellDef>Time {{currentTimeZone()}}</md-header-cell>
-          <md-cell *cdkCellDef="let game"><a class="gameLink" [routerLink]="['/games/',game.gameId]">{{game.gameDate | date :'shortDate'}} <br/>{{game.gameDate | date :'shortTime'}}</a></md-cell>
+        <ng-container matColumnDef="gameDate">
+          <mat-header-cell *matHeaderCellDef>Time {{currentTimeZone()}}</mat-header-cell>
+          <mat-cell *matCellDef="let game"><a class="gameLink" [routerLink]="['/games/',game.gameId]">{{game.gameDate | date :'shortDate'}} <br/>{{game.gameDate | date :'shortTime'}}</a></mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="join">
-          <md-header-cell *cdkHeaderCellDef>Join</md-header-cell>
-          <md-cell *cdkCellDef="let game"><a md-icon-button [routerLink]="['/join/game/',game.gameId]"><md-icon>grid_on</md-icon></a></md-cell>
+        <ng-container matColumnDef="join">
+          <mat-header-cell *matHeaderCellDef>Join</mat-header-cell>
+          <mat-cell *matCellDef="let game"><a mat-icon-button [routerLink]="['/join/game/',game.gameId]"><mat-icon>grid_on</mat-icon></a></mat-cell>
         </ng-container>
-        <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-        <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-      </md-table>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
     </div>
-  </md-card-content>
-</md-card>
+  </mat-card-content>
+</mat-card>

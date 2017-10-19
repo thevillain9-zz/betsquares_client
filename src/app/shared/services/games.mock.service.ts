@@ -108,7 +108,6 @@ export class MockGamesService implements IGamesService {
                 },
                 gameDate: '2016-10-13 06:30:00.000',
                 gamePeriod: 8,
-                isActive: true,
                 score: this.getScore()
             };
     }
@@ -187,7 +186,7 @@ export class MockGamesService implements IGamesService {
                 state: 2,
                 homeTeamScore: 30,
                 awayTeamScore: 17,
-                currentPeriod: '',
+                currentPeriod: 'Final',
                 currentTime: '',
                 currentPeriodIndex: 4,
                 periodNames: ['1', '2', '3', '4'],

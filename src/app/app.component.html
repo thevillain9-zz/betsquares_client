@@ -1,8 +1,8 @@
-<md-sidenav-container>
-  <md-sidenav #sideNav class="app-sidenav" >
+<mat-sidenav-container>
+  <mat-sidenav #sideNav class="app-sidenav" >
     <!-- sidenav content -->
     <app-side-nav color="primary" (onCloseSideNav)="sideNav.close()" color="accent"></app-side-nav>
-  </md-sidenav>
+  </mat-sidenav>
 
   <div class="container" fxLayout="column" fxFill>
     <app-header (menuToggle)="sideNav.toggle()"></app-header>
@@ -15,7 +15,7 @@
     <app-footer class="app-footer"></app-footer>
   </div>
   
-</md-sidenav-container>
+</mat-sidenav-container>
 <span class="app-action">
-  <button md-fab [routerLink]="['/games']" mdTooltip="Start a new game" mdTooltipPosition="above"><md-icon>grid_on</md-icon></button>
+  <button mat-fab [routerLink]="['/games']" mdTooltip="Start a new game" mdTooltipPosition="above"><mat-icon>grid_on</mat-icon></button>
 </span>

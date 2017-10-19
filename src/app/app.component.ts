@@ -1,4 +1,5 @@
-import {Component, Optional} from '@angular/core';
+import {Component, Optional, ViewEncapsulation} from '@angular/core';
+import { MatSidenavContainer, MatSidenav } from '@angular/material';
 
 @Component({
   selector: 'app-root',

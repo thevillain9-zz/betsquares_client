@@ -6,8 +6,6 @@ export interface IGame {
     homeTeam: ITeam;
     awayTeam: ITeam;
     gameDate: string;
-    isActive: boolean;
-    isFinished: boolean;
     score: IScore;
     gamePeriod: number;
 }

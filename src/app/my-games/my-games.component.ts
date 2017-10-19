@@ -1,12 +1,13 @@
 import { Input, Component, OnInit, OnDestroy, SimpleChanges, Inject, ViewChild, ViewChildren,
          ElementRef, Renderer, QueryList } from '@angular/core';
-import { DataSource} from '@angular/cdk';
+import { DataSource} from '@angular/cdk/collections';
 import { ActivatedRoute, Router, Params} from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AnonymousSubscription } from 'rxjs/Subscription';
 import { BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 import { BoxUserFilter } from '../shared/pipes/box-user-pipe';
+import { IScore } from '../shared/models/iscore';
 import { IGame } from '../shared/models/IGame';
 import { IUser } from '../shared/models/IUser';
 import { IGridGamesByUser } from '../shared/models/igrid-game-by-user';
@@ -35,7 +36,7 @@ export class MyGamesComponent  implements OnInit, OnDestroy {
   boxesByUserWinning: BoxUserFilter;
   boxesByUserMightWin: BoxUserFilter;
 
-  displayedColumns = ['gameDate', 'gameMatchup', 'gameScore', 'myBoxes'];
+  displayedColumns = ['gameDate', 'gameMatchup', 'gameScore', 'gameTime', 'myBoxGames', 'myBoxes', 'myWinBoxes'];
 
   private scoresSubscription: AnonymousSubscription;
   private timerSubscription: AnonymousSubscription;
@@ -84,11 +85,14 @@ export class MyGamesComponent  implements OnInit, OnDestroy {
 
   refreshScores() {
     if (this.myGamesDataSource === undefined || this.myGamesDataSource === null) {
+      this.subscribeToScores();
       return;
     }
     const games = this.myGamesDataSource.getAllGames();
     this.gamesDataService.getScores(games).subscribe((scores) => {
-
+        if (this.myGamesDataSource !== null) {
+          this.myGamesDataSource.updateScores(scores);
+        }
         this.subscribeToScores();
     }, (error) => {
     });
@@ -127,6 +131,12 @@ export class MyGamesDataSource extends DataSource<any> {
 
   getAllGames(): number[] {
     return this._games.map( ({ game}) => game.gameId);
+  }
+
+  updateScores(scores: IScore[]): void {
+    this._games.forEach((game) => {
+      game.game.score = scores.find((score) => score.gameId === game.game.gameId);
+    });
   }
 
 }

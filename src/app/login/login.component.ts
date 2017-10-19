@@ -5,7 +5,7 @@ import { Http } from '@angular/http';
 import { IUsersService } from '../shared/services/users.service.interface';
 import { UsersServiceToken } from '../shared/services/users.service.token';
 import { IUser} from '../shared/models/IUser';
-import { MdSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { ILoginResponse } from '../shared/models/ilogin-response';
 
 @Component({
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
   constructor(public route: ActivatedRoute, public router: Router, public http: Http,
     @Inject(UsersServiceToken) private usersService: IUsersService,
     public fb: FormBuilder,
-    private _snackbar: MdSnackBar) {
+    private _snackbar: MatSnackBar) {
       // reset login status
       this.usersService.logout();
 
