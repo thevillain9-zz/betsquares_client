@@ -7,8 +7,9 @@ import { RouterModule } from '@angular/router';
 import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSidenavModule, MatMenuModule, MatSelectModule, MatTableModule, MatSliderModule,
-         MatCardModule, MatIconModule, MatToolbarModule, MatButtonModule, MatListModule, MatInputModule } from '@angular/material'
+import { MatInputModule, MatSidenavModule, MatMenuModule, MatSelectModule, MatTableModule, MatSliderModule,
+         MatCardModule, MatIconModule, MatToolbarModule, MatButtonModule, MatListModule,
+         MatSnackBarModule, MatStepperModule } from '@angular/material'
 
 
 import { appRoutes } from './routes';
@@ -72,8 +73,8 @@ import { BoxUserPipe } from './shared/pipes/box-user-pipe';
     ReactiveFormsModule,
     HttpModule,
     FlexLayoutModule.forRoot(),
-    MatSidenavModule, MatMenuModule, MatSelectModule, MatTableModule, MatSliderModule, MatCardModule, MatIconModule,
-    MatButtonModule, MatToolbarModule, MatListModule, MatInputModule,
+    MatInputModule, MatSidenavModule, MatMenuModule, MatSelectModule, MatTableModule, MatSliderModule, MatCardModule, MatIconModule,
+    MatButtonModule, MatToolbarModule, MatListModule, MatSnackBarModule, MatStepperModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes)
   ],

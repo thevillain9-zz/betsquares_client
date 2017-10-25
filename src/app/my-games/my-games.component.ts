@@ -36,7 +36,7 @@ export class MyGamesComponent  implements OnInit, OnDestroy {
   boxesByUserWinning: BoxUserFilter;
   boxesByUserMightWin: BoxUserFilter;
 
-  displayedColumns = ['gameDate', 'gameMatchup', 'gameScore', 'gameTime', 'myBoxGames', 'myBoxes', 'myWinBoxes'];
+  displayedColumns = ['gameMatchup', 'gameScore', 'gameTime', 'myBoxGames', 'myBoxes', 'myWinBoxes'];
 
   private scoresSubscription: AnonymousSubscription;
   private timerSubscription: AnonymousSubscription;

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder, ValidatorFn, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterStateSnapshot } from '@angular/router';
+import { MatStep, MatHorizontalStepper } from '@angular/material/stepper'
 import { MatSnackBar} from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../../environments/environment';
@@ -23,8 +24,16 @@ import { PasswordValidation } from '../shared/validators/passwordValidation';
 })
 export class JoinGridComponent implements OnInit {
 
+    @ViewChild('step1') step1: MatStep;
+    @ViewChild('step2') step2: MatStep;
+    @ViewChild('step3') step3: MatStep;
+    @ViewChild('step4') step4: MatStep;
+    @ViewChild('stepperer') stepper: MatHorizontalStepper;
+    initialGameForm: FormGroup;
     setupGridGameForm: FormGroup;
     joinGridIronGameForm: FormGroup;
+    secondGameForm: FormGroup;
+    squaresGameForm: FormGroup;
 
     gameLabel: String = 'Game';
     isErrorState: Boolean = false;
@@ -38,11 +47,15 @@ export class JoinGridComponent implements OnInit {
     currentUser: IUser;
     gridIronGame: IGridGame;
 
+    selectedStep: Number;
+
     formErrors = {
       'name': '',
       'password': '',
       'passwordConfirm': '',
-      'fee': ''
+      'fee': '',
+      'gridIronGameId' : '',
+      'joinPassword' : ''
     };
 
   validationMessages = {
@@ -77,14 +90,13 @@ export class JoinGridComponent implements OnInit {
     constructor(private route: ActivatedRoute,
     private router: Router,
     public fb: FormBuilder,
-    private _snackbar: MatSnackBar,
     @Inject(GamesServiceToken) private gamesDataService: IGamesService,
     @Inject(GridGamesServiceToken) private gridGamesDataService: IGridGamesService,
-    @Inject(UsersServiceToken) private usersService: IUsersService) {
+    @Inject(UsersServiceToken) private usersService: IUsersService,
+    private _snackbar: MatSnackBar) {
   }
 
     ngOnInit() {
-
       // get current user
       this.currentUser = this.usersService.getCurrentUser();
       if (this.currentUser === undefined || this.currentUser === null) {
@@ -125,13 +137,16 @@ export class JoinGridComponent implements OnInit {
       this.buildForm();
 
       // Initialize stepper state
-      
     }
 
     private buildForm(): void {
       const tempDate = new Date(this.game.gameDate);
       const gridGameName = this.currentUser.firstName + '\'s ' + this.game.awayTeam.shortName + ' vs ' +
                            this.game.homeTeam.shortName + ' Game on ' + tempDate.toLocaleDateString();
+      this.initialGameForm = this.fb.group({});
+      this.initialGameForm.setErrors({'nextGame': false})
+      this.squaresGameForm = this.fb.group({});
+      this.secondGameForm = this.fb.group({});
       this.setupGridGameForm = this.fb.group({
         'name': [gridGameName, [Validators.required, Validators.minLength(5)]],
         'password': ['', [Validators.required, Validators.minLength(6)]],
@@ -140,17 +155,20 @@ export class JoinGridComponent implements OnInit {
       }, {validator: (x) => PasswordValidation.MatchPassword(x, 'password', 'passwordConfirm', 'validateEqual')});
 
       this.joinGridIronGameForm = this.fb.group({
-        'gridIronGameId': ['test', [Validators.required, Validators.minLength(6)]],
+        'gridIronGameId': ['tester123', [Validators.required, Validators.minLength(6)]],
         'joinPassword': ['', [Validators.required, Validators.minLength(6)]],
       });
 
-      this.setupGridGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.setupGridGameForm, data));
-      this.joinGridIronGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.joinGridIronGameForm, data));
+      // this.setupGridGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.setupGridGameForm, data));
+      // this.joinGridIronGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.joinGridIronGameForm, data));
 
       // resets validation
-      this.onValidateGridForm(this.setupGridGameForm);
+      // this.onValidateGridForm(this.setupGridGameForm);
   }
 
+  private onStepperChange() {
+    // console.log('CurrentStep:' + this.stepper.selectedIndex);
+  }
 
   private onValidateGridForm(formGroup: FormGroup, data?: any): boolean {
     let isValidForm = true;
@@ -159,9 +177,9 @@ export class JoinGridComponent implements OnInit {
     }
     const errorFields = [];
     const keys = Object.keys(this.formErrors);
+
     for (let i = 0; i < keys.length; i++) {
       const field = keys[i];
-
       // clear previous error message (if any)
       this.formErrors[field] = '';
 
@@ -178,6 +196,7 @@ export class JoinGridComponent implements OnInit {
               if (isValidForm) {
                 isValidForm = false;
               }
+              console.log('error in  form' + field);
               break;
             }
           }
@@ -197,24 +216,17 @@ export class JoinGridComponent implements OnInit {
   }
 
     joinGame(step: Number, isExistingGame: Boolean) {
-      if (!environment.production) {
-        console.log('joinGame('+ step + ',' + isExistingGame + ')');
-      }
-
-
-
       if (step === 1) {
         if (isExistingGame) {
           this.isJoinGridVisible = true;
+          this.isNewGridVisible = false;
         } else {
           this.isNewGridVisible = true;
+          this.isJoinGridVisible = false;
         }
         this.onAdvanceToStep(2);
       } else if (step === 2) {
-        // hide cards
-        this.isJoinGridVisible = false;
-        this.isNewGridVisible = false;
-        if (!isExistingGame) {
+        if (this.isNewGridVisible) {
           // save new grid game
           this.gridIronGame = <IGridGame>{
             'name': <String>this.setupGridGameForm.controls['name'].value,
@@ -250,31 +262,19 @@ export class JoinGridComponent implements OnInit {
     }
 
     onAdvanceToStep(step) {
-      // if (step === 2) {
-      //   this.step1.active = false;
-      //   this.step1.disabled = true;
-      //   this.step1.state = StepState.Complete;
-      //   this.step1.close();
+      if (step === 2) {
+        this.initialGameForm.clearValidators();
+        this.initialGameForm.updateValueAndValidity();
+        this.secondGameForm = this.isJoinGridVisible ? this.joinGridIronGameForm : this.setupGridGameForm;
+        this.secondGameForm.valueChanges.subscribe(data => this.onValidateGridForm(this.secondGameForm, data));
+        this.onValidateGridForm(this.secondGameForm);
 
-      //   this.step2.disabled = false;
-      //   this.step2.toggle();
-      // } else if (step === 3) {
-      //   this.step2.active = false;
-      //   this.step2.disabled = true;
-      //   this.step2.state = StepState.Complete;
-      //   this.step2.close();
-
-      //   this.step3.disabled = false;
-      //   this.step3.toggle();
-      // } else if (step === 4) {
-      //   this.step3.active = false;
-      //   this.step3.disabled = true;
-      //   this.step3.state = StepState.Complete;
-      //   this.step3.close();
-
-      //   this.step4.disabled = false;
-      //   this.step4.toggle();
-      // }
+        this.step1.completed = true;
+        this.step2.select();
+      } else if (step === 3) {
+        this.step3.select();
+      } else if (step === 4) {
+      }
     }
 
     onSubmit() {

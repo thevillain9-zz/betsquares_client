@@ -2,21 +2,21 @@
   <mat-card-title>{{userGamesLabel}}</mat-card-title>
   <mat-card-content>
       <mat-table [dataSource]="myGamesDataSource" *ngIf="!isLoadingGames">
-        <ng-container cdkColumnDef="gameDate">
-          <mat-header-cell *cdkHeaderCellDef>Game Date</mat-header-cell>
-          <mat-cell *cdkCellDef="let gridGame">  
+        <ng-container matColumnDef="gameDate">
+          <mat-header-cell *matHeaderCellDef>Game Date</mat-header-cell>
+          <mat-cell *matCellDef="let gridGame">  
               <span>{{gridGame.game.gameDate | date :'shortDate'}}</span>
             </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="gameMatchup">
-          <mat-header-cell *cdkHeaderCellDef>Matchup</mat-header-cell>
-          <mat-cell *cdkCellDef="let gridGame"> 
+        <ng-container matColumnDef="gameMatchup">
+          <mat-header-cell *matHeaderCellDef>Matchup</mat-header-cell>
+          <mat-cell *matCellDef="let gridGame"> 
             {{gridGame.game.awayTeam.location}} vs {{gridGame.game.homeTeam.location}}
           </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="gameScore">
-          <mat-header-cell *cdkHeaderCellDef>Score</mat-header-cell>
-          <mat-cell *cdkCellDef="let gridGame"> 
+        <ng-container matColumnDef="gameScore">
+          <mat-header-cell *matHeaderCellDef>Score</mat-header-cell>
+          <mat-cell *matCellDef="let gridGame"> 
             <span *ngIf="gridGame.game.score.state !== 0">
               <!-- <a [routerLink]="['/games/',gridGame.game.gameId]"> -->
                 <app-score [homeTeamScore]="gridGame.game.score.homeTeamScore"
@@ -24,9 +24,9 @@
             </span>            
           </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="gameTime">
-          <mat-header-cell *cdkHeaderCellDef>Time</mat-header-cell>
-          <mat-cell *cdkCellDef="let gridGame"> 
+        <ng-container matColumnDef="gameTime">
+          <mat-header-cell *matHeaderCellDef>Time</mat-header-cell>
+          <mat-cell *matCellDef="let gridGame"> 
             <span *ngIf="gridGame.game.score.state === 1">
               {{gridGame.game.score.currentPeriod}} <br/> {{gridGame.game.score.currentTime}}
             </span>
@@ -36,9 +36,9 @@
             <span *ngIf="gridGame.game.score.state === 2">Final</span>
           </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="myBoxGames">
-          <mat-header-cell *cdkHeaderCellDef>Box Game</mat-header-cell>
-          <mat-cell *cdkCellDef="let gridGame">
+        <ng-container matColumnDef="myBoxGames">
+          <mat-header-cell *matHeaderCellDef>Box Game</mat-header-cell>
+          <mat-cell *matCellDef="let gridGame">
             <table>
               <tr *ngFor="let gridGame2 of gridGame.gridGames">
                 <td class="boxName">
@@ -48,9 +48,9 @@
             </table>
           </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="myBoxes">
-          <mat-header-cell *cdkHeaderCellDef>Boxes</mat-header-cell>
-          <mat-cell *cdkCellDef="let gridGame">
+        <ng-container matColumnDef="myBoxes">
+          <mat-header-cell *matHeaderCellDef>Boxes</mat-header-cell>
+          <mat-cell *matCellDef="let gridGame">
             <table>
               <tr *ngFor="let gridGame2 of gridGame.gridGames">
                 <td>{{(gridGame2.boxes | boxUserFilter : boxesByUser).length}}</td>
@@ -58,9 +58,9 @@
             </table>
           </mat-cell>
         </ng-container>
-        <ng-container cdkColumnDef="myWinBoxes">
-            <mat-header-cell *cdkHeaderCellDef>Winning Boxes</mat-header-cell>
-            <mat-cell *cdkCellDef="let gridGame">
+        <ng-container matColumnDef="myWinBoxes">
+            <mat-header-cell *matHeaderCellDef>Winning Boxes</mat-header-cell>
+            <mat-cell *matCellDef="let gridGame">
               <table>
                 <tr *ngFor="let gridGame2 of gridGame.gridGames">
                   <td>{{(gridGame2.boxes | boxUserFilter : boxesByUserWinning).length}}</td>
